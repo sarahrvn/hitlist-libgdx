@@ -7,8 +7,8 @@ manera poco artística quién es el mejor.
 
 ## Integrantes
 
-Orué Stocco, Thiago Iván
-Villarreal Carballo, Sarah
+• Orué Stocco, Thiago Iván
+• Villarreal Carballo, Sarah
 
 ## Tecnologías
 
