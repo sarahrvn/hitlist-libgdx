@@ -1,9 +1,9 @@
-# Archivos de compilación
+# Compilación
 .gradle
 build/
 */build/
 
-# Archivos de IDEs
+# IDEs
 .idea/
 *.iml
 *.ipr
@@ -13,9 +13,9 @@ build/
 .settings/
 *.nbproject/
 
-# Archivos locales
+# Locales
 local.properties
 
-# Archivos de sistema operativo
+# Sistemas operativos
 .DS_Store
 Thumbs.db
