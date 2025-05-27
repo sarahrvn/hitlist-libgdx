@@ -14,7 +14,7 @@ Villarreal Carballo, Sarah
 
 Este proyecto fue desarrollado utilizando el framework `LibGDX`, con el objetivo de adaptarlo para plataformas de `escritorio`.
 
-##Compilación y Ejecución
+## Compilación y Ejecución
 
   - Descargar proyecto
 
@@ -28,7 +28,7 @@ Este proyecto fue desarrollado utilizando el framework `LibGDX`, con el objetivo
   - Seleccionar "Gradle" > "Existing Gradle Project".
   - Navegar hasta la carpeta raíz del proyecto descargado y seguir los pasos del asistente.
 
-##Estado Actual del Proyecto
+## Estado Actual del Proyecto
 
 • Configuración inicial y estructura del proyecto: ✔
 
