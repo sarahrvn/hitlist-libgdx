@@ -1,33 +1,34 @@
 # Hitlist
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+El juego se llama "Hitlist". Nos adentramos en los conflictos que vienen con la fama, donde los jugadores toman como
+propio el ego de ser una celebridad y buscan competir con aquellos que se interpongan en su camino al estrellato. En
+esta realidad paralela, los famosos se desquitan en peleas cronometradas o con intentos limitados, definiendo de
+manera poco artística quién es el mejor.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## Integrantes
 
-## Platforms
+Orué Stocco, Thiago Iván
+Villarreal Carballo, Sarah
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+## Tecnologías
 
-## Gradle
+Este proyecto fue desarrollado utilizando el framework `LibGDX`, con el objetivo de adaptarlo para plataformas de `escritorio`.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+##Compilación y Ejecución
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+  - Descargar proyecto
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+• IntelliJ IDEA / Android Studio:
+  - Dirigirse a "File" > "Open..." (u "Open" en la pantalla de bienvenida).
+  - Navegar hasta la carpeta donde se ubica el proyecto descargado.
+  - Seleccionar el archivo build.gradle (o la carpeta que lo contiene) y elegir "Open as Project". El IDE debería reconocerlo como un proyecto Gradle.
+
+• Eclipse:
+  - Dirigirse a "File" > "Import...".
+  - Seleccionar "Gradle" > "Existing Gradle Project".
+  - Navegar hasta la carpeta raíz del proyecto descargado y seguir los pasos del asistente.
+
+##Estado Actual del Proyecto
+
+• Configuración inicial y estructura del proyecto: ✔
+
