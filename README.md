@@ -13,6 +13,7 @@ manera poco artística quién es el mejor.
 ## Integrantes
 
 • Orué Stocco, Thiago Iván
+
 • Villarreal Carballo, Sarah
 
 ## Tecnologías y plataformas objetivo
@@ -21,27 +22,34 @@ Este proyecto fue programado en el lenguaje `Java` utilizando el IDE `IntelliJ I
 
 ## Compilación y Ejecución
 
-• Clonar repositorio con Git:
-    - git clone https://github.com/sarahrvn/hitlist-libgdx.git 
-    - cd hitlist-libgdx
-  
-• Importar proyecto en el IDE. Algunos ejemplos son:
-  ∘ IntelliJ IDEA / Android Studio:
-    - Dirigirse a "File" > "Open..." (u "Open" en la pantalla de bienvenida).
-    - Navegar hasta la carpeta donde se ubica el proyecto descargado.
-    - Seleccionar el archivo build.gradle (o la carpeta que lo contiene) y elegir "Open as Project". El IDE debería reconocerlo como un proyecto Gradle.
-    
-  ∘ Eclipse:
-    - Dirigirse a "File" > "Import...".
-    - Seleccionar "Gradle" > "Existing Gradle Project".
-    - Navegar hasta la carpeta raíz del proyecto descargado y seguir los pasos del asistente.
+— Clonar repositorio con Git:
 
-• Ejecutar el juego:
+    git clone https://github.com/sarahrvn/hitlist-libgdx.git 
+    cd hitlist-libgdx
+  
+— Importar proyecto en el IDE de preferencia. Algunos ejemplos son:
+
+∘ IntelliJ IDEA / Android Studio:
+
+- Dirigirse a "File" > "Open..." (u "Open" en la pantalla de bienvenida).
+- Navegar hasta la carpeta donde se ubica el proyecto descargado.
+- Seleccionar el archivo build.gradle (o la carpeta que lo contiene) y elegir "Open as Project". El IDE debería reconocerlo como un proyecto Gradle.
+    
+∘ Eclipse:
+  
+- Dirigirse a "File" > "Import...".
+- Seleccionar "Gradle" > "Existing Gradle Project".
+- Navegar hasta la carpeta raíz del proyecto descargado y seguir los pasos del asistente.
+
+— Ejecutar el juego:
+
   ∘ Opción 1:
-    - Correr la clase lwjgl3Launcher.java (Ubicación: lwjgl3/src/main/java/com/punchline/hitlist/lwjgl3/Lwjgl3Launcher.java).
+  
+-  Correr la clase lwjgl3Launcher.java (Ubicación: lwjgl3/src/main/java/com/punchline/hitlist/lwjgl3/Lwjgl3Launcher.java).
     
   ∘ Opción 2:
-    - Usar el comando de Gradle (./gradlew lwjgl3:run).
+  
+- Usar el comando de Gradle (./gradlew lwjgl3:run).
 
 ## Estado Actual del Proyecto
 
