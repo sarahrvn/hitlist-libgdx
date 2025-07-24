@@ -11,7 +11,6 @@ public abstract class Personaje {
     private Estadistica defensa;
     private Estadistica velocidad;
 
-    public Personaje(int valorFuerza) {
-        this.fuerza = new Estadistica("Fuerza", valorFuerza);
+    public Personaje() {
     }
 }
