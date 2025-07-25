@@ -1,1 +1,10 @@
-libgdx.png
+fondos/fondo.png
+mapas/bloque.tsx
+mapas/bloque_madera.png
+mapas/escalera.tsx
+mapas/escalera_madera.png
+mapas/mapa.tmx
+mapas/piso.tsx
+mapas/piso_esquina.tsx
+mapas/piso_madera.png
+mapas/piso_madera_esquina.png
