@@ -58,7 +58,7 @@ public class Principal extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         System.out.println("Chauu");
-        System.out.println("Larequetepe");
+        System.out.println("Larequetepeee");
         camara.update();
 
         // Dibujar fondo que ocupa toda la pantalla
