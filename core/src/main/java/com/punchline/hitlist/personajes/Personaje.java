@@ -12,6 +12,5 @@ public abstract class Personaje {
     private Estadistica velocidad;
 
     public Personaje() {
-        System.out.println("Hola");
     }
 }
