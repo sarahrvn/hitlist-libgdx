@@ -19,35 +19,43 @@ public class Principal extends ApplicationAdapter {
     private Texture fondo;
     private SpriteBatch batch;
 
-    private int anchoPantalla, altoPantalla;
-
+    private int mapaPixelAncho, mapaPixelAlto;
 
     @Override
     public void create() {
-        // Tamaño de pantalla en píxeles
-        anchoPantalla = Gdx.graphics.getWidth();
-        altoPantalla = Gdx.graphics.getHeight();
-
-        // Cargar fondo
         fondo = new Texture("fondos/fondo.png");
         batch = new SpriteBatch();
 
-        // Cargar mapa
+        // Cargar mapa y obtener dimensiones en píxeles
         mapa = new TmxMapLoader().load("mapas/mapa.tmx");
         renderMapa = new OrthogonalTiledMapRenderer(mapa);
 
-        // Obtener dimensiones del mapa
         MapProperties props = mapa.getProperties();
         int tileWidth = props.get("tilewidth", Integer.class);
         int tileHeight = props.get("tileheight", Integer.class);
         int mapWidth = props.get("width", Integer.class);
         int mapHeight = props.get("height", Integer.class);
 
-        float mapaPixelAncho = tileWidth * mapWidth;
-        float mapaPixelAlto = tileHeight * mapHeight;
 
-        // Crear cámara con tamaño de pantalla, pero sin escalar
-        camara = new OrthographicCamera(anchoPantalla, altoPantalla);
+        mapaPixelAncho = tileWidth * mapWidth;
+        mapaPixelAlto = tileHeight * mapHeight;
+
+        // Crear cámara ajustada
+        camara = new OrthographicCamera();
+        ajustarCamara(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        // Calcula el zoom para que el mapa entre en pantalla.
+
+    }
+
+
+    // Calcula cuánto debería hacer zoom la cámara para que el mapa entero entre en pantalla.
+    private void ajustarCamara(int anchoPantalla, int altoPantalla) {
+        float escalaX = (float) anchoPantalla / mapaPixelAncho;
+        float escalaY = (float) altoPantalla / mapaPixelAlto;
+        float zoom = 1f / Math.min(escalaX, escalaY); // zoom para que el mapa entre en pantalla
+
+        camara.setToOrtho(false, anchoPantalla, altoPantalla);
+        camara.zoom = zoom;
         camara.position.set(mapaPixelAncho / 2f, mapaPixelAlto / 2f, 0);
         camara.update();
     }
@@ -56,31 +64,32 @@ public class Principal extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         camara.update();
 
-        // Dibujar fondo que ocupa toda la pantalla
+        // Dibujar fondo
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-        batch.draw(fondo, camara.position.x - anchoPantalla / 2f, camara.position.y - altoPantalla / 2f, anchoPantalla, altoPantalla);
+        batch.draw(fondo, camara.position.x - (camara.viewportWidth * camara.zoom) / 2f,
+            camara.position.y - (camara.viewportHeight * camara.zoom) / 2f,
+            camara.viewportWidth * camara.zoom,
+            camara.viewportHeight * camara.zoom);
         batch.end();
 
-        // Renderizar mapa centrado
+        // Renderizar mapa
         renderMapa.setView(camara);
         renderMapa.render();
     }
 
     @Override
     public void resize(int width, int height) {
-        camara.viewportWidth = width;
-        camara.viewportHeight = height;
-        camara.update();
+        ajustarCamara(width, height);
     }
 
     @Override
     public void dispose() {
         fondo.dispose();
         batch.dispose();
-        renderMapa.dispose();
         mapa.dispose();
     }
 }
