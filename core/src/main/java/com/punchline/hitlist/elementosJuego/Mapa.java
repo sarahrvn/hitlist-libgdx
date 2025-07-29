@@ -1,4 +1,4 @@
-package com.punchline.hitlist.pantallaJuego;
+package com.punchline.hitlist.elementosJuego;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
