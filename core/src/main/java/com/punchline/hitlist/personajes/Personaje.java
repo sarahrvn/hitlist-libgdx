@@ -20,6 +20,7 @@ public class Personaje {
 
     //Getters y setters
     public String getNombre() {
+        System.out.println("Hola");
         return this.tipo.getNombre();
     }
 
