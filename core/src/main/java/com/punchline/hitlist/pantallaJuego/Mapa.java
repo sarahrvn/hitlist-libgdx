@@ -16,7 +16,7 @@ public class Mapa {
 
     private final int mapaPixelAncho, mapaPixelAlto;
 
-    public Mapa(MapasDisponibles tipoMapa) {
+    public Mapa(MapaDisponible tipoMapa) {
 
 
         fondo = new Texture(tipoMapa.getfondoPng());
@@ -51,7 +51,7 @@ public class Mapa {
     }
 
     public void renderFondo(SpriteBatch batch, OrthographicCamera camara) {
-       // Dibujado del fondo
+        // Dibujado del fondo
 
         batch.begin();
         batch.draw(fondo,

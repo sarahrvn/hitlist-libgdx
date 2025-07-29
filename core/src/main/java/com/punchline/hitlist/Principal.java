@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.punchline.hitlist.pantallaJuego.Mapa;
-import com.punchline.hitlist.pantallaJuego.MapasDisponibles;
+import com.punchline.hitlist.pantallaJuego.MapaDisponible;
 
 public class Principal extends ApplicationAdapter {
     private OrthographicCamera camara;
@@ -19,7 +19,7 @@ public class Principal extends ApplicationAdapter {
         batch = new SpriteBatch();
 
         // Eleccion del mapa a cargar
-        mapa = new Mapa(MapasDisponibles.MAPA_BOSQUE);
+        mapa = new Mapa(MapaDisponible.MAPA_BOSQUE);
         mapa.ajustarCamara(camara, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
