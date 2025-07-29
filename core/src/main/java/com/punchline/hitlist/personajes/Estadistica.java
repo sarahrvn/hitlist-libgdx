@@ -2,10 +2,10 @@ package com.punchline.hitlist.personajes;
 
 public class Estadistica {
 
-    private final int VALOR_MIN = 0;
-    private final int VALOR_MAX = 10;
     private String nombre;
     private int valor;
+    private final int VALOR_MIN = 0;
+    private final int VALOR_MAX = 10;
 
     public Estadistica(String nombre, int valor) {
         this.nombre = nombre;
@@ -23,7 +23,7 @@ public class Estadistica {
         return valor;
     }
 
-    public void setEstado(int valor){
+    public void setEstadistica(int valor){
         if(valor < VALOR_MIN) {
             this.valor = VALOR_MIN;
         } else if (valor > VALOR_MAX) {
@@ -34,6 +34,6 @@ public class Estadistica {
     }
 
     public void ajustarValor(int cantidad){
-        setEstado(this.valor + cantidad);
+        setEstadistica(this.valor + cantidad);
     }
 }
