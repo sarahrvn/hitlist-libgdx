@@ -1,4 +1,5 @@
 fondos/fondo.png
+logos/Hitlist_Titulo.png
 logos/Punchline_Logo.png
 mapas/bloque.tsx
 mapas/bloque_madera.png
