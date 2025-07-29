@@ -1,6 +1,5 @@
 fondos/fondo.png
 logos/Punchline_Logo.png
-logos/Punchline_Logoo.png
 mapas/bloque.tsx
 mapas/bloque_madera.png
 mapas/escalera.tsx
