@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.punchline.hitlist.personajes.Personaje;
+import com.punchline.hitlist.personajes.TipoPersonaje;
 import com.punchline.hitlist.screens.PantallaJuego;
 import com.punchline.hitlist.screens.PantallaLogo;
 import com.punchline.hitlist.screens.PantallaTitulo;
@@ -19,6 +21,8 @@ public class Principal extends ApplicationAdapter {
     private PantallaTitulo pantallaTitulo;
     private EstadoScreen estadoActual;
 
+    private Personaje personaje1; //PROVISIONAL. PRUEBA. PROTOTIPO
+
     private float tiempo = 0;
 
     @Override
@@ -29,6 +33,8 @@ public class Principal extends ApplicationAdapter {
 
         pantallaLogo = new PantallaLogo();
         estadoActual = EstadoScreen.LOGO;
+
+        personaje1 = new Personaje(TipoPersonaje.TIPAZO);
     }
 
     @Override
@@ -77,7 +83,10 @@ public class Principal extends ApplicationAdapter {
                 break;
 
             case JUEGO:
-                pantallaJuego.render(batch,camara);
+                //batch.begin();
+                //personaje1.dibujar(batch);
+                pantallaJuego.render(batch,camara,personaje1);
+                //batch.begin();
                 break;
         }
     }

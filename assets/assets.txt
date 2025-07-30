@@ -10,3 +10,4 @@ mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
+sprites/tipazo.png
