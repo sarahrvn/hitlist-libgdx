@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.punchline.hitlist.elementosJuego.Mapa;
 import com.punchline.hitlist.elementosJuego.MapaDisponible;
+import com.punchline.hitlist.personajes.Personaje;
 
 public class PantallaJuego {
 
@@ -17,9 +18,10 @@ public class PantallaJuego {
         mapa.ajustarCamara(camara, ancho, alto);
     }
 
-    public void render(SpriteBatch batch, OrthographicCamera camara) {
+    public void render(SpriteBatch batch, OrthographicCamera camara, Personaje personaje1) {
         mapa.renderFondo(batch, camara);
         mapa.renderMapa(camara);
+        personaje1.dibujar(batch);
     }
 
     public void dispose() {
