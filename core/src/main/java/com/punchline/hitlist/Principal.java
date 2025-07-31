@@ -88,16 +88,20 @@ public class Principal extends ApplicationAdapter {
 
                 pantallaMenu.render(batch, camara);
 
-                // Acá podrías agregar más lógica para manejar input o pasar a otra pantalla
+                if (pantallaMenu.quiereJugar()) {
+                    pantallaJuego = new PantallaJuego();
+                    estadoActual = EstadoScreen.JUEGO;
+                } else if (pantallaMenu.quiereSalir()) {
+                    Gdx.app.exit();
+                }
                 break;
 
-            //case JUEGO:
-                //batch.begin();
-                //personaje1.dibujar(batch);
-                //pantallaJuego.render(batch,camara,personaje1);
-                //batch.begin();
-                //break;
+            case JUEGO:
+                pantallaJuego.render(batch, camara, personaje1);
+                break;
         }
+
+
     }
 
     @Override
