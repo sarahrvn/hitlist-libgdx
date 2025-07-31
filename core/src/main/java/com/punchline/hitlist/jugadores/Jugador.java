@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 public class Jugador {
     private String nombre;
-    private Personaje combatiente;
 
     private HashMap<String, Personaje> compras = new HashMap<>();
 
@@ -15,10 +14,10 @@ public class Jugador {
         this.nombre = nombre;
     }
 
-    //esto falta terminar
-    public Personaje asignarPersonaje(String nombrePersonaje) {
+    //esto falta terminarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    /*public Personaje asignarPersonaje(String nombrePersonaje) {
         return personajeElegido = compras.get(nombrePersonaje);
-    }
+    }*/
 
     public void comprar(TipoPersonaje tipoElegido) {
         compras.put(tipoElegido.getNombre(), new Personaje(tipoElegido));
