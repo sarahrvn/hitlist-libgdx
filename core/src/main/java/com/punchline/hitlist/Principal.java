@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.punchline.hitlist.personajes.Personaje;
 import com.punchline.hitlist.personajes.TipoPersonaje;
 import com.punchline.hitlist.screens.*;
-
+//
 public class Principal extends ApplicationAdapter {
     private OrthographicCamera camara;
     private SpriteBatch batch;
