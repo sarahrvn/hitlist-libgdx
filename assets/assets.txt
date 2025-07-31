@@ -1,6 +1,8 @@
+fondos/Fondo_Menu.png
 fondos/fondo.png
 logos/Hitlist_Titulo.png
 logos/Punchline_Logo.png
+logos/Titulo_Mas_Chico.png
 mapas/bloque.tsx
 mapas/bloque_madera.png
 mapas/escalera.tsx

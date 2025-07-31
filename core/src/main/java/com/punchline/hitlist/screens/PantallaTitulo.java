@@ -41,7 +41,8 @@ public class PantallaTitulo {
         batch.end();
 
         // Detectar entrada
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+        {
             PaseAJuego = true;
         }
     }

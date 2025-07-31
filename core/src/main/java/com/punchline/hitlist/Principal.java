@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.punchline.hitlist.personajes.Personaje;
 import com.punchline.hitlist.personajes.TipoPersonaje;
-import com.punchline.hitlist.screens.PantallaJuego;
-import com.punchline.hitlist.screens.PantallaLogo;
-import com.punchline.hitlist.screens.PantallaTitulo;
-import com.punchline.hitlist.screens.EstadoScreen;
+import com.punchline.hitlist.screens.*;
 
 public class Principal extends ApplicationAdapter {
     private OrthographicCamera camara;
@@ -19,6 +16,7 @@ public class Principal extends ApplicationAdapter {
     private PantallaLogo pantallaLogo;
     private PantallaJuego pantallaJuego;
     private PantallaTitulo pantallaTitulo;
+    private PantallaMenu pantallaMenu;
     private EstadoScreen estadoActual;
 
     private Personaje personaje1; //PROVISIONAL. PRUEBA. PROTOTIPO
@@ -76,18 +74,29 @@ public class Principal extends ApplicationAdapter {
 
                 if (pantallaTitulo.SaltarAJuego())
                 {
-                    pantallaJuego = new PantallaJuego();
-                    pantallaJuego.ajustarCamara(camara, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                    estadoActual = EstadoScreen.JUEGO;
+                    pantallaMenu = new PantallaMenu();
+                    estadoActual = EstadoScreen.MENU;
                 }
                 break;
 
-            case JUEGO:
+            case MENU:
+                Gdx.gl.glClearColor(0, 0, 0, 1); // fondo negro o como prefieras
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+                camara.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                camara.update();
+
+                pantallaMenu.render(batch, camara);
+
+                // Acá podrías agregar más lógica para manejar input o pasar a otra pantalla
+                break;
+
+            //case JUEGO:
                 //batch.begin();
                 //personaje1.dibujar(batch);
-                pantallaJuego.render(batch,camara,personaje1);
+                //pantallaJuego.render(batch,camara,personaje1);
                 //batch.begin();
-                break;
+                //break;
         }
     }
 
@@ -98,6 +107,7 @@ public class Principal extends ApplicationAdapter {
         {
             pantallaJuego.ajustarCamara(camara, width, height);
         }
+
     }
 
     @Override
@@ -105,6 +115,7 @@ public class Principal extends ApplicationAdapter {
     {
         if (pantallaLogo != null) pantallaLogo.dispose();
         if (pantallaTitulo != null) pantallaTitulo.dispose();
+        if (pantallaMenu != null) pantallaMenu.dispose();
         if (pantallaJuego != null) pantallaJuego.dispose();
         batch.dispose();
     }
