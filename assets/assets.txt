@@ -1,5 +1,7 @@
 fondos/Fondo_Menu.png
 fondos/fondo.png
+hud/corazon_amarillo.png
+hud/corazon_amarilloo.png
 logos/Hitlist_Titulo.png
 logos/Punchline_Logo.png
 logos/Titulo_Mas_Chico.png
@@ -12,4 +14,5 @@ mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
+sprites/Sprite Sheet Sabrina.png
 sprites/tipazo.png

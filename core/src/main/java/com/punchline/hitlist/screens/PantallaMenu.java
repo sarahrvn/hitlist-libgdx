@@ -36,7 +36,8 @@ public class PantallaMenu {
     }
 
     // Dibujado y centrado del logo en la pantalla.
-    public void render(SpriteBatch batch, OrthographicCamera camara) {
+    public void render(SpriteBatch batch, OrthographicCamera camara)
+    {
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
 
@@ -69,7 +70,8 @@ public class PantallaMenu {
         batch.end();
 
         // Detectar clic
-        if (Gdx.input.justTouched()) {
+        if (Gdx.input.justTouched())
+        {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camara.unproject(touch);
 
@@ -80,23 +82,29 @@ public class PantallaMenu {
             layout.setText(font, textoSalir);
             rectSalir.set(salirX, salirY - layout.height, layout.width, layout.height);
 
-            if (rectJugar.contains(touch.x, touch.y)) {
+            if (rectJugar.contains(touch.x, touch.y))
+            {
                 quiereJugar = true;
-            } else if (rectSalir.contains(touch.x, touch.y)) {
+            }
+            else if (rectSalir.contains(touch.x, touch.y))
+            {
                 quiereSalir = true;
             }
         }
     }
 
-    public boolean quiereJugar() {
+    public boolean quiereJugar()
+    {
         return quiereJugar;
     }
 
-    public boolean quiereSalir() {
+    public boolean quiereSalir()
+    {
         return quiereSalir;
     }
 
-    public void dispose() {
+    public void dispose()
+    {
         FONDO.dispose();
         TITULO.dispose();
         font.dispose();
