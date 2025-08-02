@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Mapa {
     private final TiledMap mapa;
@@ -17,15 +17,10 @@ public class Mapa {
     private final int mapaPixelAncho, mapaPixelAlto;
 
     public Mapa(MapaDisponible tipoMapa) {
-
-
         fondo = new Texture(tipoMapa.getfondoPng());
         mapa = new TmxMapLoader().load(tipoMapa.getmapaTmx());
         renderMapa = new OrthogonalTiledMapRenderer(mapa);
-        // Crea y dibuja el mapa y el fondo que selecciona en el enum.
 
-
-        //Calculo para descubrir cual es la anchura y la altura total del mapa.
         MapProperties props = mapa.getProperties();
         int tileWidth = props.get("tilewidth", Integer.class);
         int tileHeight = props.get("tileheight", Integer.class);
@@ -36,34 +31,29 @@ public class Mapa {
         mapaPixelAlto = tileHeight * mapHeight;
     }
 
-    public void ajustarCamara(OrthographicCamera camara, int anchoPantalla, int altoPantalla) {
-        // Ajusta el zoom y la posición de la camara para que el mapa entre de forma completa en pantalla.
-        float escalaX = (float) anchoPantalla / mapaPixelAncho;
-        float escalaY = (float) altoPantalla / mapaPixelAlto;
-        float zoom = 1f / Math.min(escalaX, escalaY);
-
-
-        // Centra la camara al centro del mapa.
-        camara.setToOrtho(false, anchoPantalla, altoPantalla);
-        camara.zoom = zoom;
-        camara.position.set(mapaPixelAncho / 2f, mapaPixelAlto / 2f, 0);
-        camara.update();
+    // Getters para obtener las dimensiones del mapa
+    public int getAncho() {
+        return mapaPixelAncho;
     }
 
-    public void renderFondo(SpriteBatch batch, OrthographicCamera camara) {
-        // Dibujado del fondo
-
-        batch.begin();
-        batch.draw(fondo,
-            camara.position.x - (camara.viewportWidth * camara.zoom) / 2f,
-            camara.position.y - (camara.viewportHeight * camara.zoom) / 2f,
-            camara.viewportWidth * camara.zoom,
-            camara.viewportHeight * camara.zoom);
-        batch.end();
+    public int getAlto() {
+        return mapaPixelAlto;
     }
+
+    // Dibujar el fondo ajustado al tamaño del viewport
+    public void renderFondo(SpriteBatch batch, OrthographicCamera camara, Viewport viewport) {
+        batch.draw(
+            fondo,
+            camara.position.x - viewport.getWorldWidth() / 2f,
+            camara.position.y - viewport.getWorldHeight() / 2f,
+            viewport.getWorldWidth(),
+            viewport.getWorldHeight()
+        );
+    }
+
+
 
     public void renderMapa(OrthographicCamera camara) {
-        // Dibujado del mapa
         renderMapa.setView(camara);
         renderMapa.render();
     }

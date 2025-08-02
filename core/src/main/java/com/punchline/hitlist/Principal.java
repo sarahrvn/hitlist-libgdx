@@ -93,7 +93,7 @@ public class Principal extends ApplicationAdapter {
                 break;
 
             case JUEGO:
-                pantallaJuego.render(batch, camara);
+                pantallaJuego.render(batch);
                 break;
         }
 
@@ -103,11 +103,9 @@ public class Principal extends ApplicationAdapter {
     @Override
     public void resize(int width, int height)
     {
-        if (estadoActual == EstadoScreen.JUEGO && pantallaJuego != null)
-        {
-            pantallaJuego.ajustarCamara(camara, width, height);
+        if (pantallaJuego != null) {
+            pantallaJuego.ajustarCamara(width, height);
         }
-
     }
 
     @Override
