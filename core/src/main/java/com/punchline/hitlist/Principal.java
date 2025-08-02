@@ -19,8 +19,6 @@ public class Principal extends ApplicationAdapter {
     private PantallaMenu pantallaMenu;
     private EstadoScreen estadoActual;
 
-    private Personaje personaje1; //PROVISIONAL. PRUEBA. PROTOTIPO
-
     private float tiempo = 0;
 
     @Override
@@ -31,8 +29,6 @@ public class Principal extends ApplicationAdapter {
 
         pantallaLogo = new PantallaLogo();
         estadoActual = EstadoScreen.LOGO;
-
-        personaje1 = new Personaje(TipoPersonaje.TIPAZO);
     }
 
     @Override
@@ -80,7 +76,7 @@ public class Principal extends ApplicationAdapter {
                 break;
 
             case MENU:
-                Gdx.gl.glClearColor(0, 0, 0, 1); // fondo negro o como prefieras
+                Gdx.gl.glClearColor(0, 0, 0, 1);
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
                 camara.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -97,7 +93,7 @@ public class Principal extends ApplicationAdapter {
                 break;
 
             case JUEGO:
-                pantallaJuego.render(batch, camara, personaje1);
+                pantallaJuego.render(batch, camara);
                 break;
         }
 

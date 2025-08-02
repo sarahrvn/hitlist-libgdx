@@ -1,5 +1,7 @@
 package com.punchline.hitlist.personajes;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -33,6 +35,41 @@ public class Personaje {
         sprite.draw(batch);
 
         batch.end();
+    }
+
+    public void realizarMovimientos() {
+        mover();
+        golpear();
+    }
+
+    private void mover() {
+        boolean saltar = Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean izquierda = Gdx.input.isKeyPressed(Input.Keys.A);
+        boolean derecha = Gdx.input.isKeyPressed(Input.Keys.D);
+        boolean esquivar = Gdx.input.isKeyPressed(Input.Keys.S);
+
+        float x = sprite.getX(), y = sprite.getY(), delta = Gdx.graphics.getDeltaTime();
+        float modificadorMovimiento = ((float) (this.velocidad.getValor()) /2) * delta;
+        boolean puedeMoverseX = (izquierda != derecha), puedeMoverseY = (saltar != esquivar);
+        if(puedeMoverseX) {
+            if (derecha) {
+                x += modificadorMovimiento;
+            } else if (izquierda) {
+                x -= modificadorMovimiento;
+            }
+        }
+
+        if(puedeMoverseY) {
+            if (saltar) {
+                y += modificadorMovimiento;
+            } /*else if (esquivar) {
+
+            }*/
+        }
+        sprite.setPosition(x, y);
+    }
+
+    private void golpear() {
     }
 
     //Getters y setters
