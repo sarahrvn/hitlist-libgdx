@@ -18,4 +18,6 @@ mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
 sprites/Sprite Sheet Sabrina.png
+sprites/sabrina_carpenter.png
+sprites/sabrina_carpenter.txt
 sprites/tipazo.png
