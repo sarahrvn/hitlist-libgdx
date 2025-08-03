@@ -2,7 +2,7 @@ package com.punchline.hitlist.personajes;
 
 public enum TipoPersonaje {
     TIPAZO("Tipazo", 10, 10, 10, 10, "sprites/tipazo.png"),
-    SABRINA_CARPENTER("Sabrina Carpenter", 5, 7, 3, 4, "sprites/sabrina_carpenter.png"),
+    SABRINA_CARPENTER("Sabrina Carpenter", 5, 7, 3, 4, "sprites/sabrina_carpenter.txt"),
     RICARDO_FORT("Ricardo Fort", 3, 5, 7, 6, "sprites/ricardo_fort.png"),
     VEGETTA777("Vegetta777", 8, 4, 2, 2, "sprites/vegetta777.png");
 
