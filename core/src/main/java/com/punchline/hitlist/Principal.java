@@ -100,13 +100,13 @@ public class Principal extends ApplicationAdapter {
 
     }
 
-    @Override
-    public void resize(int width, int height)
-    {
-        if (pantallaJuego != null) {
-            pantallaJuego.ajustarCamara(width, height);
-        }
-    }
+    //@Override
+    //public void resize(int width, int height)
+    //{
+        //if (pantallaJuego != null) {
+            //pantallaJuego.ajustarCamara(width, height);
+        //}
+   // }
 
     @Override
     public void dispose()
