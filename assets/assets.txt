@@ -10,6 +10,8 @@ mapas/bloque_madera.png
 mapas/escalera.tsx
 mapas/escalera_madera.png
 mapas/mapa.tmx
+mapas/mapa_colisiones.tmx
+mapas/p.world
 mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png

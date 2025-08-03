@@ -1,7 +1,7 @@
 package com.punchline.hitlist.elementosJuego;
 
 public enum MapaDisponible {
-    MAPA_BOSQUE("mapas/mapa.tmx", "fondos/fondo.png");
+    MAPA_BOSQUE("mapas/mapa_colisiones.tmx", "fondos/fondo.png");
 
     private final String MAPA_TMX;
     private final String FONDO_PNG;

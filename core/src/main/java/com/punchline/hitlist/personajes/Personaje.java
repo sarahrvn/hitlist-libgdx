@@ -1,74 +1,71 @@
 package com.punchline.hitlist.personajes;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch; // Importa SpriteBatch
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.Array; // Importa Array
 
 public class Personaje {
+    private final Sprite sprite;
+    private final Rectangle boundingBox;  // Caja de colisión para el personaje
 
-    private TipoPersonaje tipo;
-    private Estadistica fuerza, destreza, defensa, velocidad;
-    private final Texture SPRITESHEET;
-    private Sprite sprite;
-
-    private int vida = 3;
-    private int resistencia = 1000;
+    private float velocidad = 3f;
 
     public Personaje(TipoPersonaje tipo) {
-        this.tipo = tipo;
-        this.fuerza = new Estadistica("Fuerza", tipo.getFuerza());
-        this.destreza = new Estadistica("Destreza", tipo.getDestreza());
-        this.defensa = new Estadistica("Defensa", tipo.getDefensa());
-        this.velocidad = new Estadistica("Velocidad", tipo.getVelocidad());
-        this.SPRITESHEET = new Texture(tipo.getRutaSprite());
-        this.sprite = new Sprite(SPRITESHEET, 0, 0, 100, 142);
-        // No posicionamos aquí, lo hacemos desde PantallaJuego
-    }
+        // Cargar el sprite usando el tipo
+        sprite = new Sprite(new Texture(tipo.getRutaSprite()));
+        sprite.setOriginCenter();
 
-    public void setPosition(float x, float y) {
-        sprite.setPosition(x - sprite.getWidth()/2f, y - sprite.getHeight()/2f); // Centrar el sprite en x,y
+        // Caja de colisión
+        boundingBox = new Rectangle(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
     }
 
     public void dibujar(SpriteBatch batch) {
+        sprite.setPosition(boundingBox.x, boundingBox.y);
         sprite.draw(batch);
     }
 
-    public void realizarMovimientos() {
-        mover();
-        golpear();
-    }
+    public void realizarMovimientos(Array<Rectangle> colisiones) {
+        float movimientoX = 0, movimientoY = 0;
 
-    private void mover() {
-        boolean saltar = Gdx.input.isKeyPressed(Input.Keys.W);
-        boolean izquierda = Gdx.input.isKeyPressed(Input.Keys.A);
-        boolean derecha = Gdx.input.isKeyPressed(Input.Keys.D);
-        boolean esquivar = Gdx.input.isKeyPressed(Input.Keys.S);
-
-        float x = sprite.getX(), y = sprite.getY(), delta = Gdx.graphics.getDeltaTime();
-        float modificadorMovimiento = ((float) (this.velocidad.getValor()) / 2) * delta;
-        boolean puedeMoverseX = (izquierda != derecha), puedeMoverseY = (saltar != esquivar);
-        if(puedeMoverseX) {
-            if (derecha) {
-                x += modificadorMovimiento;
-            } else if (izquierda) {
-                x -= modificadorMovimiento;
-            }
-
+        // Leer las teclas para mover al personaje
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            movimientoX = velocidad;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            movimientoX = -velocidad;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            movimientoY = velocidad;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            movimientoY = -velocidad;
         }
 
-        if(puedeMoverseY) {
-            if (saltar) {
-                y += modificadorMovimiento;
+        // Mover el personaje
+        boundingBox.x += movimientoX;
+        boundingBox.y += movimientoY;
+
+        // Verificar colisiones con los bloques
+        for (Rectangle colision : colisiones) {
+            if (boundingBox.overlaps(colision)) {
+                // Si hay colisión, revertimos el movimiento
+                boundingBox.x -= movimientoX;
+                boundingBox.y -= movimientoY;
             }
         }
-        sprite.setPosition(x, y);
     }
 
-    private void golpear() {
-        // Implementar si quieres
+    public void setPosition(float x, float y) {
+        boundingBox.setPosition(x, y);
     }
 
-    // Getters y setters (sin cambios)...
+    public Rectangle getBoundingRectangle() {
+        return boundingBox;
+    }
+
+    public void dispose() {
+        sprite.getTexture().dispose();
+    }
 }

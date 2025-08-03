@@ -1,13 +1,15 @@
 package com.punchline.hitlist.elementosJuego;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 public class Mapa {
     private final TiledMap mapa;
@@ -15,6 +17,8 @@ public class Mapa {
     private final Texture fondo;
 
     private final int mapaPixelAncho, mapaPixelAlto;
+
+    private final Array<Rectangle> colisiones;
 
     public Mapa(MapaDisponible tipoMapa) {
         fondo = new Texture(tipoMapa.getfondoPng());
@@ -29,6 +33,18 @@ public class Mapa {
 
         mapaPixelAncho = tileWidth * mapWidth;
         mapaPixelAlto = tileHeight * mapHeight;
+
+        colisiones = new Array<>();
+        crearColisiones();
+    }
+
+    // Crear las colisiones a partir de los objetos de la capa "colisiones"
+    private void crearColisiones() {
+        // Leer los objetos de la capa "colisiones"
+        for (RectangleMapObject rectObj : mapa.getLayers().get("colisiones").getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = rectObj.getRectangle();
+            colisiones.add(rect);  // Guardar las colisiones en una lista
+        }
     }
 
     // Getters para obtener las dimensiones del mapa
@@ -41,7 +57,7 @@ public class Mapa {
     }
 
     // Dibujar el fondo ajustado al tamaño del viewport
-    public void renderFondo(SpriteBatch batch, OrthographicCamera camara, Viewport viewport) {
+    public void renderFondo(SpriteBatch batch, OrthographicCamera camara, com.badlogic.gdx.utils.viewport.Viewport viewport) {
         batch.draw(
             fondo,
             camara.position.x - viewport.getWorldWidth() / 2f,
@@ -51,11 +67,13 @@ public class Mapa {
         );
     }
 
-
-
     public void renderMapa(OrthographicCamera camara) {
         renderMapa.setView(camara);
         renderMapa.render();
+    }
+
+    public Array<Rectangle> getColisiones() {
+        return colisiones;  // Devuelve las colisiones para que el personaje pueda verificarlas
     }
 
     public void dispose() {
