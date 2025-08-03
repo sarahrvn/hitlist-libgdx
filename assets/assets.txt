@@ -1,5 +1,6 @@
 fondos/Fondo_Menu.png
 fondos/fondo.png
+fondos/mapaCiudad.png
 hud/corazon_amarillo.png
 hud/corazon_amarilloo.png
 logos/Hitlist_Titulo.png

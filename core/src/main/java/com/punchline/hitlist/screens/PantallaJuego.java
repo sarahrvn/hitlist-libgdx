@@ -23,7 +23,7 @@ public class PantallaJuego {
 
     public PantallaJuego() {
         // Crear el mapa, el personaje y el HUD
-        mapa = new Mapa(MapaDisponible.MAPA_BOSQUE);  // Pasar el mapa con el fondo y las colisiones
+        mapa = new Mapa(MapaDisponible.MAPA_CIUDAD);  // Pasar el mapa con el fondo y las colisiones
         personaje1 = new Personaje(TipoPersonaje.TIPAZO);  // Personaje sin Box2D, solo con rectángulo
         hud = new Hud();
 
