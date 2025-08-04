@@ -1,6 +1,7 @@
 package com.punchline.hitlist.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +21,9 @@ public class PantallaJuego {
 
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
+    private boolean enPausa = false;
+    private float tiempoTranscurrido = 0;
+    private boolean tiempoCumplido = false;
 
     public PantallaJuego() {
         // Crear el mapa, el personaje y el HUD
@@ -41,31 +45,60 @@ public class PantallaJuego {
     }
 
     public void render(SpriteBatch batch) {
-        // Limpiar pantalla y dibujar con la cámara
+        Gdx.gl.glClearColor(1, 1, 1, 1); // Fondo blanco (puede ser 0,0,0,1 si querés negro)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Fondo: dibujar usando la cámara
+        float delta = Gdx.graphics.getDeltaTime();
+
+
+
+        // ← Aquí controlás el toggle de pausa con ESC
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            enPausa = !enPausa;
+        }
+
+        // ← Avisás al HUD si está pausado
+        hud.mostrarPausa(enPausa);
+
+        // ← Solo actualizás lógica y timer si NO está pausado
+        if (!enPausa) {
+            tiempoTranscurrido += delta;
+
+            if (tiempoTranscurrido >= 60 && !tiempoCumplido) {
+                tiempoCumplido = true;
+            }
+
+            personaje1.realizarMovimientos(mapa.getColisiones());
+        }
+
+        hud.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
+
+
+
         batch.begin();
         batch.setProjectionMatrix(camaraJuego.combined);
         mapa.renderFondo(batch, camaraJuego, viewportJuego);
         batch.end();
 
-        // Dibujar el mapa
         mapa.renderMapa(camaraJuego);
 
-        // Dibujar el personaje con su colisión básica
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
-        personaje1.dibujar(batch);  // Mostrar el personaje
-        personaje1.realizarMovimientos(mapa.getColisiones());  // Actualizar el movimiento y las colisiones
+        personaje1.dibujar(batch);
         batch.end();
 
-        // Mostrar el HUD
         hud.render(batch);
     }
+
+    public boolean terminoElTiempo() {
+        return tiempoCumplido;
+    }
+
 
     public void dispose() {
         mapa.dispose();
         hud.dispose();
     }
+
+
 }
