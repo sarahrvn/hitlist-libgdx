@@ -19,3 +19,22 @@ Todas las modificaciones importantes de este proyecto se documentarán en este a
 - Cambio de nombre del apartado "Tecnologías" del README.md a "Tecnologías y plataformas objetivo".
 ### Fixed
 - Corregidas las instrucciones del README.md para la compilación y ejecución del proyecto.
+
+## [0.1.0] - 03/08/2025
+### Added
+- Primera versión jugable (vertical slice).
+- Sistema de movimiento lateral básico (izquierda/derecha).
+- Sistema de movimiento vertical básico (salto).
+- Colisiones físicas con plataformas del mapa.
+- Manejo de entradas por teclado (WASD) para control de personaje.
+- Estructura base de clases `Personaje`, `TipoPersonaje` y `Estadistica`.
+- Sistema de dibujado desde clase `Personaje`.
+- Animaciones de `idle`, `correr` y `saltar`.
+- Soporte para spritesheet con `TextureAtlas`.
+- Carga de sprites recortados desde atlas `.atlas` exportado con TexturePacker.
+- Manejo de pantallas `introducción`, `menú`, `juego`.
+- HUD con información básica durante la pantalla de juego.
+- Opción de pausado del juego (Esc).
+
+### Changed
+- Se actualizó la sección de "Estado Actual del Proyecto" en el README.md.
