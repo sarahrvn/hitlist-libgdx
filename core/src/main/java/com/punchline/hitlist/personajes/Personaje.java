@@ -34,7 +34,7 @@ public class Personaje {
 
         this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
         this.sprite = ATLAS.createSprite("idle");
-        sprite.setOriginCenter();
+        sprite.setPosition(2000, 4000);
 
 
         // Caja de colisión
