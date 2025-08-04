@@ -12,7 +12,6 @@ public class PantallaLogo {
         LOGO = new Texture("logos/Punchline_Logo.png");
     }
 
-    // Dibujado y centrado del logo en la pantalla.
     public void render(SpriteBatch batch, OrthographicCamera camara) {
         batch.setProjectionMatrix(camara.combined);
         batch.begin();

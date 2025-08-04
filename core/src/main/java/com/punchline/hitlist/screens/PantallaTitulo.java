@@ -14,11 +14,11 @@ public class PantallaTitulo {
     private final BitmapFont font;
     private final GlyphLayout layout;
 
-    private boolean PaseAJuego = false;
+    private boolean PaseAMenu = false;
 
     public PantallaTitulo() {
         TITULO = new Texture("logos/Hitlist_Titulo.png");
-        font = new BitmapFont(); // fuente por defecto
+        font = new BitmapFont();
         layout = new GlyphLayout();
     }
 
@@ -26,12 +26,10 @@ public class PantallaTitulo {
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
 
-        // Dibujar el título centrado
         float x = (camara.viewportWidth - TITULO.getWidth()) / 2f;
         float y = (camara.viewportHeight - TITULO.getHeight()) / 2f;
         batch.draw(TITULO, x, y);
 
-        // Mensaje debajo del logo
         String mensaje = "Presiona ENTER o ESPACIO para comenzar";
         layout.setText(font, mensaje);
         float textoX = (camara.viewportWidth - layout.width) / 2f;
@@ -40,15 +38,14 @@ public class PantallaTitulo {
 
         batch.end();
 
-        // Detectar entrada
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
         {
-            PaseAJuego = true;
+            PaseAMenu = true;
         }
     }
 
     public boolean SaltarAJuego() {
-        return PaseAJuego;
+        return PaseAMenu;
     }
 
     public void dispose() {

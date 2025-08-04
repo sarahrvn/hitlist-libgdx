@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Array; // Importa Array
 public class Personaje {
     private TipoPersonaje tipo;
     private Estadistica fuerza, destreza, defensa, velocidad;
-    private final TextureAtlas atlas;
+    private final TextureAtlas ATLAS;
     private Sprite sprite;
 
     private int vida = 3;
@@ -32,10 +32,10 @@ public class Personaje {
         this.defensa = new Estadistica("Defensa", tipo.getDefensa());
         this.velocidad = new Estadistica("Velocidad", tipo.getVelocidad());
 
-        this.atlas = new TextureAtlas(tipo.getRutaSprite());
-        this.sprite = atlas.createSprite("idle");
-        //sprite.setOriginCenter();
-        sprite.setPosition(2000, 2000);
+        this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
+        this.sprite = ATLAS.createSprite("idle");
+        sprite.setOriginCenter();
+
 
         // Caja de colisión
         boundingBox = new Rectangle(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
@@ -59,18 +59,18 @@ public class Personaje {
         boolean puedeMoverseX = (izquierda != derecha), puedeMoverseY = (saltar != esquivar);
 
         if(puedeMoverseX) {
-            this.sprite = atlas.createSprite("correr1");
+            this.sprite = ATLAS.createSprite("correr1");
 
             if (derecha) {
                 dx = modificadorMovimiento;
                 if (sprite.isFlipX()) {
-                    sprite.flip(true, false); // Lo pone mirando a la derecha (sin flip)
+                    sprite.flip(true, false);
                 }
 
             } else if (izquierda) {
                 dx = -modificadorMovimiento;
                 if (!sprite.isFlipX()) {
-                    sprite.flip(true, false); // Lo pone mirando a la izquierda
+                    sprite.flip(true, false);
                 }
             }
         }
@@ -86,13 +86,13 @@ public class Personaje {
         dy = velocidadY * delta;
 
         if (!puedeMoverseX && !puedeMoverseY) {
-            sprite = atlas.createSprite("idle");
+            sprite = ATLAS.createSprite("idle");
         }
 
         boundingBox.x += dx;
         for (Rectangle colision : colisiones) {
             if (boundingBox.overlaps(colision)) {
-                boundingBox.x -= dx; // revertir si colisiona
+                boundingBox.x -= dx;
                 break;
             }
         }
@@ -105,7 +105,7 @@ public class Personaje {
                 } else {
                     enElSuelo = false;
                 }
-                boundingBox.y -= dy; // revertir si colisiona
+                boundingBox.y -= dy;
                 velocidadY = 0;
                 break;
             }
