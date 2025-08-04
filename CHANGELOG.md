@@ -35,6 +35,8 @@ Todas las modificaciones importantes de este proyecto se documentarán en este a
 - Manejo de pantallas `introducción`, `menú`, `juego`.
 - HUD con información básica durante la pantalla de juego.
 - Opción de pausado del juego (Esc).
+- Implementación de cámaras para las distintas capas de la pantalla de juego.
+- Uso de viewports para poder ajustar el tamaño de la ventana.
 
 ### Changed
 - Se actualizó la sección de "Estado Actual del Proyecto" en el README.md.
