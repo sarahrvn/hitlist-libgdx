@@ -11,7 +11,7 @@ manera poco artística quién es el mejor.
 [Más información](https://github.com/sarahrvn/hitlist-libgdx/wiki/Propuesta-del-Proyecto)
 
 **Enlace al Video Demostrativo del Proyecto (1° Adelanto)):** 
-[Link](https://youtu.be/UXs8aZqhY_4))
+[Video](https://youtu.be/UXs8aZqhY_4)
 
 ## Integrantes
 
