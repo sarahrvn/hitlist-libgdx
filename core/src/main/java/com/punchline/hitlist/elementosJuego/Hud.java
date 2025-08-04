@@ -15,9 +15,11 @@ public class Hud {
     private Texture iconoVida;
 
     private int vidas = 3;
+    private float tiempoRestante = 60f; // Tiempo inicial en segundos
+    private boolean pausado = false;
 
-    public Hud()
-    {
+
+    public Hud() {
         camaraHud = new OrthographicCamera();
         viewport = new FitViewport(800, 480, camaraHud);
         viewport.apply();
@@ -29,15 +31,25 @@ public class Hud {
         font = new BitmapFont();
     }
 
+    public void mostrarPausa(boolean pausado) {
+        this.pausado = pausado;
+    }
+
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(camaraHud.combined);
         batch.begin();
 
-        for (int i = 0; i < vidas; i++)
-        {
+        // Dibujar las vidas
+        for (int i = 0; i < vidas; i++) {
             batch.draw(iconoVida, 10 + i * 40, viewport.getWorldHeight() - 50, 32, 32);
         }
 
+        // Mostrar tiempo restante
+        font.draw(batch, "Tiempo: " + (int) tiempoRestante, viewport.getWorldWidth() - 130, viewport.getWorldHeight() - 20);
+
+        if (pausado) {
+            font.draw(batch, "PAUSADO", viewport.getWorldWidth() / 2 - 40, viewport.getWorldHeight() / 2);
+        }
         batch.end();
     }
 
@@ -48,5 +60,9 @@ public class Hud {
     public void dispose() {
         font.dispose();
         iconoVida.dispose();
+    }
+
+    public void setTiempoRestante(float tiempoRestante) {
+        this.tiempoRestante = tiempoRestante;
     }
 }

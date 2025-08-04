@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.punchline.hitlist.personajes.Personaje;
-import com.punchline.hitlist.personajes.TipoPersonaje;
 import com.punchline.hitlist.screens.*;
 //
 public class Principal extends ApplicationAdapter {
@@ -18,6 +16,9 @@ public class Principal extends ApplicationAdapter {
     private PantallaTitulo pantallaTitulo;
     private PantallaMenu pantallaMenu;
     private EstadoScreen estadoActual;
+
+    private float tiempoJuego = 0;
+    private boolean timerIniciado = false;
 
     private float tiempo = 0;
 
@@ -94,6 +95,11 @@ public class Principal extends ApplicationAdapter {
 
             case JUEGO:
                 pantallaJuego.render(batch);
+                if (pantallaJuego.terminoElTiempo()) {
+                    pantallaMenu = new PantallaMenu();
+                    estadoActual = EstadoScreen.MENU;
+                    pantallaJuego = null; // Limpieza opcional
+                }
                 break;
         }
 
