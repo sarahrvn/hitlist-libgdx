@@ -53,6 +53,6 @@ Este proyecto fue programado en el lenguaje `Java` utilizando el IDE `IntelliJ I
 
 ## Estado Actual del Proyecto
 
-• Configuración inicial y estructura del proyecto: ✔
+• Versión reducida y funcional: ✔
 
 
