@@ -15,7 +15,7 @@ public class Hud {
     private Texture iconoVida;
 
     private int vidas = 3;
-    private float tiempoRestante = 60f; // Tiempo inicial en segundos
+    private float tiempoRestante = 60f;
     private boolean pausado = false;
 
 
@@ -39,12 +39,10 @@ public class Hud {
         batch.setProjectionMatrix(camaraHud.combined);
         batch.begin();
 
-        // Dibujar las vidas
         for (int i = 0; i < vidas; i++) {
             batch.draw(iconoVida, 10 + i * 40, viewport.getWorldHeight() - 50, 32, 32);
         }
 
-        // Mostrar tiempo restante
         font.draw(batch, "Tiempo: " + (int) tiempoRestante, viewport.getWorldWidth() - 130, viewport.getWorldHeight() - 20);
 
         if (pausado) {

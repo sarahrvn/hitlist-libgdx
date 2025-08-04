@@ -26,25 +26,22 @@ public class PantallaMenu {
     public PantallaMenu() {
         FONDO = new Texture("fondos/Fondo_Menu.png");
         TITULO = new Texture("logos/Hitlist_Titulo.png");
-        font = new BitmapFont(); // Fuente por defecto, podés cambiarla por una custom si tenés
+        font = new BitmapFont();
 
-        font.getData().setScale(3f); // Tamaño del texto
+        font.getData().setScale(3f);
         font.setColor(Color.ORANGE);
 
         rectJugar = new Rectangle();
         rectSalir = new Rectangle();
     }
 
-    // Dibujado y centrado del logo en la pantalla.
     public void render(SpriteBatch batch, OrthographicCamera camara)
     {
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
 
-        // Dibujar fondo para que siempre ocupe toda la pantalla
         batch.draw(FONDO, 0, 0, camara.viewportWidth, camara.viewportHeight);
 
-        // Dibujar título proporcional al tamaño de la pantalla
         float tituloAncho = camara.viewportWidth / 7f;
         float tituloAlto = tituloAncho * ((float) TITULO.getHeight() / TITULO.getWidth());
 
@@ -53,14 +50,12 @@ public class PantallaMenu {
 
         batch.draw(TITULO, tituloX, tituloY, tituloAncho, tituloAlto);
 
-        // Botón "Jugar"
         String textoJugar = "Jugar";
         layout.setText(font, textoJugar);
         float jugarX = camara.viewportWidth / 10f;
         float jugarY = tituloY - 80f;
         font.draw(batch, textoJugar, jugarX, jugarY);
 
-        // Botón "Salir"
         String textoSalir = "Salir";
         layout.setText(font, textoSalir);
         float salirX = jugarX;
@@ -69,13 +64,11 @@ public class PantallaMenu {
 
         batch.end();
 
-        // Detectar clic
         if (Gdx.input.justTouched())
         {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camara.unproject(touch);
 
-            // Definir áreas de texto como botones
             layout.setText(font, textoJugar);
             rectJugar.set(jugarX, jugarY - layout.height, layout.width, layout.height);
 

@@ -36,20 +36,16 @@ public class Principal extends ApplicationAdapter {
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
 
-
-        // Fondo blanco para el logo.
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        // Actualizacion de la camara para el batch
         camara.update();
         batch.setProjectionMatrix(camara.combined);
 
         switch (estadoActual)
         {
             case LOGO:
-                // Ajuste de la camara para que abarque toda la pantalla y centra el logo
                 camara.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 camara.update();
                 pantallaLogo.render(batch, camara);

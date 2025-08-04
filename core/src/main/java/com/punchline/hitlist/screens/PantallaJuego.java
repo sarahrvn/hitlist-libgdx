@@ -16,8 +16,8 @@ import com.punchline.hitlist.elementosJuego.Hud;
 public class PantallaJuego {
 
     private Mapa mapa;
-    private final Personaje personaje1;
-    private final Hud hud;
+    private final Personaje PERSONAJE_1;
+    private final Hud HUD;
 
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
@@ -26,41 +26,33 @@ public class PantallaJuego {
     private boolean tiempoCumplido = false;
 
     public PantallaJuego() {
-        // Crear el mapa, el personaje y el HUD
-        mapa = new Mapa(MapaDisponible.MAPA_CIUDAD);  // Pasar el mapa con el fondo y las colisiones
-        personaje1 = new Personaje(TipoPersonaje.SABRINA_CARPENTER);  // Personaje sin Box2D, solo con rectángulo
-        hud = new Hud();
 
-        // Crear la cámara del juego y el viewport
+        mapa = new Mapa(MapaDisponible.MAPA_CIUDAD);
+        PERSONAJE_1 = new Personaje(TipoPersonaje.SABRINA_CARPENTER);
+        HUD = new Hud();
+
         camaraJuego = new OrthographicCamera();
         viewportJuego = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camaraJuego);
-        viewportJuego.apply();  // Asegúrate de aplicar el viewport
+        viewportJuego.apply();
 
-        // Centrar la cámara en el mapa
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
-        camaraJuego.update();  // No olvidar actualizar la cámara después de moverla
+        camaraJuego.update();
 
-        // Posicionar el personaje inicialmente en el centro del mapa
-        personaje1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 2f);
+        PERSONAJE_1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 2f);
     }
 
     public void render(SpriteBatch batch) {
-        Gdx.gl.glClearColor(1, 1, 1, 1); // Fondo blanco (puede ser 0,0,0,1 si querés negro)
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float delta = Gdx.graphics.getDeltaTime();
 
-
-
-        // ← Aquí controlás el toggle de pausa con ESC
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             enPausa = !enPausa;
         }
 
-        // ← Avisás al HUD si está pausado
-        hud.mostrarPausa(enPausa);
+        HUD.mostrarPausa(enPausa);
 
-        // ← Solo actualizás lógica y timer si NO está pausado
         if (!enPausa) {
             tiempoTranscurrido += delta;
 
@@ -68,10 +60,10 @@ public class PantallaJuego {
                 tiempoCumplido = true;
             }
 
-            personaje1.realizarMovimientos(mapa.getColisiones());
+            PERSONAJE_1.realizarMovimientos(mapa.getColisiones());
         }
 
-        hud.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
+        HUD.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
 
 
 
@@ -84,10 +76,10 @@ public class PantallaJuego {
 
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
-        personaje1.dibujar(batch);
+        PERSONAJE_1.dibujar(batch);
         batch.end();
 
-        hud.render(batch);
+        HUD.render(batch);
     }
 
     public boolean terminoElTiempo() {
@@ -97,7 +89,7 @@ public class PantallaJuego {
 
     public void dispose() {
         mapa.dispose();
-        hud.dispose();
+        HUD.dispose();
     }
 
 

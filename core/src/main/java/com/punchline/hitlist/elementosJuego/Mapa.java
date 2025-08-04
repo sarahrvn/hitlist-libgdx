@@ -38,16 +38,13 @@ public class Mapa {
         crearColisiones();
     }
 
-    // Crear las colisiones a partir de los objetos de la capa "colisiones"
     private void crearColisiones() {
-        // Leer los objetos de la capa "colisiones"
         for (RectangleMapObject rectObj : mapa.getLayers().get("colisiones").getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = rectObj.getRectangle();
-            colisiones.add(rect);  // Guardar las colisiones en una lista
+            colisiones.add(rect);
         }
     }
 
-    // Getters para obtener las dimensiones del mapa
     public int getAncho() {
         return mapaPixelAncho;
     }
@@ -56,7 +53,6 @@ public class Mapa {
         return mapaPixelAlto;
     }
 
-    // Dibujar el fondo ajustado al tamaño del viewport
     public void renderFondo(SpriteBatch batch, OrthographicCamera camara, com.badlogic.gdx.utils.viewport.Viewport viewport) {
         batch.draw(
             fondo,
@@ -73,7 +69,7 @@ public class Mapa {
     }
 
     public Array<Rectangle> getColisiones() {
-        return colisiones;  // Devuelve las colisiones para que el personaje pueda verificarlas
+        return colisiones;
     }
 
     public void dispose() {
