@@ -18,7 +18,6 @@ public class PantallaJuego {
     private Mapa mapa;
     private final Personaje PERSONAJE_1;
     private final Hud HUD;
-
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
     private boolean enPausa = false;
@@ -33,7 +32,7 @@ public class PantallaJuego {
 
         camaraJuego = new OrthographicCamera();
         viewportJuego = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camaraJuego);
-        viewportJuego.apply();
+        viewportJuego.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
@@ -45,6 +44,24 @@ public class PantallaJuego {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        update();
+
+        batch.begin();
+        batch.setProjectionMatrix(camaraJuego.combined);
+        mapa.renderFondo(batch, camaraJuego, viewportJuego);
+        batch.end();
+
+        mapa.renderMapa(camaraJuego);
+
+        batch.setProjectionMatrix(camaraJuego.combined);
+        batch.begin();
+        PERSONAJE_1.dibujar(batch);
+        batch.end();
+
+        HUD.render(batch);
+    }
+
+    public void update(){
         float delta = Gdx.graphics.getDeltaTime();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -60,26 +77,12 @@ public class PantallaJuego {
                 tiempoCumplido = true;
             }
 
-            PERSONAJE_1.realizarMovimientos(mapa.getColisiones());
+            //PERSONAJE_1.realizarMovimientos(mapa.getColisiones());
+
+
         }
 
         HUD.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
-
-
-
-        batch.begin();
-        batch.setProjectionMatrix(camaraJuego.combined);
-        mapa.renderFondo(batch, camaraJuego, viewportJuego);
-        batch.end();
-
-        mapa.renderMapa(camaraJuego);
-
-        batch.setProjectionMatrix(camaraJuego.combined);
-        batch.begin();
-        PERSONAJE_1.dibujar(batch);
-        batch.end();
-
-        HUD.render(batch);
     }
 
     public boolean terminoElTiempo() {

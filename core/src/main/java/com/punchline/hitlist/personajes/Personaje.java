@@ -34,7 +34,7 @@ public class Personaje {
 
         this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
         this.sprite = ATLAS.createSprite("idle");
-        sprite.setOriginCenter();
+        sprite.setPosition(2000, 4000);
 
 
         // Caja de colisión
@@ -47,69 +47,69 @@ public class Personaje {
     }
 
     public void realizarMovimientos(Array<Rectangle> colisiones) {
-        boolean saltar = Gdx.input.isKeyPressed(Input.Keys.W);
-        boolean izquierda = Gdx.input.isKeyPressed(Input.Keys.A);
-        boolean derecha = Gdx.input.isKeyPressed(Input.Keys.D);
-        boolean esquivar = Gdx.input.isKeyPressed(Input.Keys.S);
-
-
-        float delta = Gdx.graphics.getDeltaTime();
-        float modificadorMovimiento = ((float) (this.velocidad.getValor()) * 10) * delta;
-        float dx = 0, dy = 0;
-        boolean puedeMoverseX = (izquierda != derecha), puedeMoverseY = (saltar != esquivar);
-
-        if(puedeMoverseX) {
-            this.sprite = ATLAS.createSprite("correr1");
-
-            if (derecha) {
-                dx = modificadorMovimiento;
-                if (sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                }
-
-            } else if (izquierda) {
-                dx = -modificadorMovimiento;
-                if (!sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                }
-            }
-        }
-
-        if(puedeMoverseY) {
-            if (saltar && enElSuelo) {
-                velocidadY = VELOCIDAD_SALTO;
-                enElSuelo = false;
-            }
-        }
-
-        velocidadY += GRAVEDAD * delta;
-        dy = velocidadY * delta;
-
-        if (!puedeMoverseX && !puedeMoverseY) {
-            sprite = ATLAS.createSprite("idle");
-        }
-
-        boundingBox.x += dx;
-        for (Rectangle colision : colisiones) {
-            if (boundingBox.overlaps(colision)) {
-                boundingBox.x -= dx;
-                break;
-            }
-        }
-
-        boundingBox.y += dy;
-        for (Rectangle colision : colisiones) {
-            if (boundingBox.overlaps(colision)) {
-                if (velocidadY < 0) {
-                    enElSuelo = true;
-                } else {
-                    enElSuelo = false;
-                }
-                boundingBox.y -= dy;
-                velocidadY = 0;
-                break;
-            }
-        }
+//        boolean saltar = Gdx.input.isKeyPressed(Input.Keys.W);
+//        boolean izquierda = Gdx.input.isKeyPressed(Input.Keys.A);
+//        boolean derecha = Gdx.input.isKeyPressed(Input.Keys.D);
+//        boolean esquivar = Gdx.input.isKeyPressed(Input.Keys.S);
+//
+//
+//        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1/30f); // max 0.033s
+//        float modificadorMovimiento = ((float) (this.velocidad.getValor()) * 70) * delta;
+//        float dx = 0, dy = 0;
+//        boolean puedeMoverseX = (izquierda != derecha), puedeMoverseY = (saltar != esquivar);
+//
+//        if(puedeMoverseX) {
+//            this.sprite = ATLAS.createSprite("correr1");
+//
+//            if (derecha) {
+//                dx = modificadorMovimiento;
+//                if (sprite.isFlipX()) {
+//                    sprite.flip(true, false);
+//                }
+//
+//            } else if (izquierda) {
+//                dx = -modificadorMovimiento;
+//                if (!sprite.isFlipX()) {
+//                    sprite.flip(true, false);
+//                }
+//            }
+//        }
+//
+//        if(puedeMoverseY) {
+//            if (saltar && enElSuelo) {
+//                velocidadY = VELOCIDAD_SALTO;
+//                enElSuelo = false;
+//            }
+//        }
+//
+//        velocidadY += GRAVEDAD * delta;
+//        dy = velocidadY * delta;
+//
+//        if (!puedeMoverseX && !puedeMoverseY) {
+//            sprite = ATLAS.createSprite("idle");
+//        }
+//
+//        boundingBox.x += dx;
+//        for (Rectangle colision : colisiones) {
+//            if (boundingBox.overlaps(colision)) {
+//                boundingBox.x -= dx;
+//                break;
+//            }
+//        }
+//
+//        boundingBox.y += dy;
+//        for (Rectangle colision : colisiones) {
+//            if (boundingBox.overlaps(colision)) {
+//                if (velocidadY < 0) {
+//                    enElSuelo = true;
+//                } else {
+//                    enElSuelo = false;
+//                }
+//                boundingBox.y -= dy;
+//                velocidadY = 0;
+//                break;
+//            }
+//        }
     }
 
     public void setPosition(float x, float y) {
