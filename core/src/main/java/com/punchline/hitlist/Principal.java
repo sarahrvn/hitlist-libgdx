@@ -90,7 +90,7 @@ public class Principal extends ApplicationAdapter {
                 break;
 
             case JUEGO:
-                pantallaJuego.render(batch);
+                pantallaJuego.render(delta);
                 if (pantallaJuego.terminoElTiempo()) {
                     pantallaMenu = new PantallaMenu();
                     estadoActual = EstadoScreen.MENU;

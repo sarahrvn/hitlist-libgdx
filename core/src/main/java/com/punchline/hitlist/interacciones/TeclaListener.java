@@ -114,7 +114,11 @@ public class TeclaListener implements InputProcessor {
     }
 
     public boolean isEscapeJustPressed() {
-        return escapeJustPressed;
+        if (this.escapeJustPressed) {
+            this.escapeJustPressed = false;
+            return true;
+        }
+        return false;
     }
 
 
