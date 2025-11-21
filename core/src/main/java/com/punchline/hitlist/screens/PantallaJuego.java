@@ -73,8 +73,6 @@ public class PantallaJuego implements Screen {
     }
 
     public void update(float delta){
-
-        // KeyListener
         Gdx.input.setInputProcessor(this.teclaListener);
 
         // Manejar pausa
@@ -86,29 +84,40 @@ public class PantallaJuego implements Screen {
 
         if (!enPausa) {
             tiempoTranscurrido += delta;
-
             if (tiempoTranscurrido >= 60 && !tiempoCumplido) {
                 tiempoCumplido = true;
             }
 
-            // PERSONAJE 1 MOVIMIENTOS (Local)
-            if (this.teclaListener.isArriba()) {
-                this.PERSONAJE_1.saltar(mapa.getColisiones());
+            // ---- INPUTS P1 ----
+
+            // Usamos "JustPressed" para saltar, para que no vuele si mantiene la tecla
+            if (teclaListener.isP1ArribaJustPressed()) {
+                PERSONAJE_1.saltar();
             }
 
-            if (this.teclaListener.isAbajo()) {
-                this.PERSONAJE_1.esquivar(mapa.getColisiones());
+            if (teclaListener.isP1Izquierda()) {
+                PERSONAJE_1.caminarIzquierda();
             }
 
-            if (this.teclaListener.isIzquierda() && !this.teclaListener.isDerecha() ) {
-                this.PERSONAJE_1.caminarIzquierda(mapa.getColisiones());
+            if (teclaListener.isP1Derecha()) {
+                PERSONAJE_1.caminarDerecha();
             }
 
-            if (this.teclaListener.isDerecha() && !this.teclaListener.isIzquierda() ) {
-                this.PERSONAJE_1.caminarDerecha(mapa.getColisiones());
+            if (teclaListener.isP1Abajo()) {
+                // PERSONAJE_1.esquivar();
             }
 
+            // ---- INPUTS P2 ----
+            /*
+            if (teclaListener.isP2ArribaJustPressed()) {
+                PERSONAJE_2.saltar();
+            }
+            ... etc
+            */
 
+            // --- ACTUALIZAR FÍSICAS (Aquí aplicamos gravedad y movimiento real) ---
+            PERSONAJE_1.update(delta, mapa.getColisiones());
+            // PERSONAJE_2.update(delta, mapa.getColisiones());
         }
 
         HUD.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
