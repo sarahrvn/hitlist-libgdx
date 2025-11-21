@@ -6,30 +6,33 @@ import com.badlogic.gdx.Input.Keys;
 public class TeclaListener implements InputProcessor {
     // Jugador 1 (WASD)
     private boolean w = false, a = false, s = false, d = false;
-    private boolean wJustPressed = false; // Para el salto
+    private boolean wJustPressed = false, sJustPressed = false;
 
     // Jugador 2 (Flechitas)
     private boolean up = false, down = false, left = false, right = false;
-    private boolean upJustPressed = false; // Para el salto
+    private boolean upJustPressed = false, downJustPressed = false;
 
     // Generales
     private boolean escape = false, escapeJustPressed = false;
+    private boolean enter = false, enterJustPressed = false;
 
     @Override
     public boolean keyDown(int keycode) {
         // P1
         if(keycode == Keys.W) { w = true; wJustPressed = true; }
-        if(keycode == Keys.S) { s = true; }
+        if(keycode == Keys.S) { s = true; sJustPressed = true; }
         if(keycode == Keys.A) { a = true; }
         if(keycode == Keys.D) { d = true; }
 
         // P2
         if(keycode == Keys.UP) { up = true; upJustPressed = true; }
-        if(keycode == Keys.DOWN) { down = true; }
+        if(keycode == Keys.DOWN) { down = true; downJustPressed = true; }
         if(keycode == Keys.LEFT) { left = true; }
         if(keycode == Keys.RIGHT) { right = true; }
 
+        // General
         if(keycode == Keys.ESCAPE) { escape = true; escapeJustPressed = true; }
+        if(keycode==Keys.ENTER) { this.enter = true; this.enterJustPressed = true; }
 
         return true;
     }
@@ -53,7 +56,7 @@ public class TeclaListener implements InputProcessor {
         return true;
     }
 
-    // Getters para Jugador 1
+    // ---- Getters para Jugador 1 ----
     public boolean isP1ArribaJustPressed() {
         if (wJustPressed) {
             wJustPressed = false;
@@ -65,7 +68,7 @@ public class TeclaListener implements InputProcessor {
     public boolean isP1Izquierda() { return a; }
     public boolean isP1Derecha() { return d; }
 
-    // Getters para Jugador 2
+    // ---- Getters para Jugador 2 ----
     public boolean isP2ArribaJustPressed() {
         if (upJustPressed) {
             upJustPressed = false;
@@ -77,15 +80,43 @@ public class TeclaListener implements InputProcessor {
     public boolean isP2Izquierda() { return left; }
     public boolean isP2Derecha() { return right; }
 
+    // ---- JUST PRESSED GENERALES ----
+
     public boolean isEscapeJustPressed() {
-        if (escapeJustPressed) {
-            escapeJustPressed = false;
+        if (this.escapeJustPressed) {
+            this.escapeJustPressed = false;
             return true;
         }
         return false;
     }
 
-    // Métodos obligatorios vacíos...
+    public boolean isEnterJustPressed() {
+        if (this.enterJustPressed) {
+            this.enterJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isArribaJustPressed() {
+        if (this.wJustPressed || this.upJustPressed) {
+            this.wJustPressed = false;
+            this.upJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isAbajoJustPressed() {
+        if (this.sJustPressed || this.downJustPressed) {
+            this.sJustPressed = false;
+            this.downJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    // Métodos obligatorios vacíos
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }

@@ -13,6 +13,7 @@ import com.punchline.hitlist.interacciones.TeclaListener;
 import com.punchline.hitlist.personajes.Personaje;
 import com.punchline.hitlist.personajes.TipoPersonaje;
 import com.punchline.hitlist.elementosJuego.Hud;
+import com.punchline.hitlist.utils.HiloTiempo; // Importamos tu nuevo hilo
 
 public class PantallaJuego implements Screen {
 
@@ -22,10 +23,14 @@ public class PantallaJuego implements Screen {
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
     private boolean enPausa = false;
-    private float tiempoTranscurrido = 0;
+
+    // Variables de Tiempo
+    private int segundosRestantes = 60;
     private boolean tiempoCumplido = false;
+    private HiloTiempo hiloTiempo; // Referencia al hilo
+
     private TeclaListener teclaListener = new TeclaListener();
-    private SpriteBatch batch; // NUEVO: agregar el batch como atributo
+    private SpriteBatch batch;
 
     public PantallaJuego() {
         mapa = new Mapa(MapaDisponible.MAPA_CIUDAD);
@@ -41,41 +46,51 @@ public class PantallaJuego implements Screen {
 
         PERSONAJE_1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 2f);
 
-        batch = new SpriteBatch(); // NUEVO: crear el batch aquí
+        batch = new SpriteBatch();
+
+        // INICIAMOS EL HILO AL ESTILO DE TU PROFESOR
+        hiloTiempo = new HiloTiempo(this);
+        hiloTiempo.start();
+    }
+
+    // Este es el método que llama el Hilo cada 1 segundo
+    public void procesarSegundo() {
+        if (!enPausa && !tiempoCumplido) {
+            segundosRestantes--;
+
+            if (segundosRestantes <= 0) {
+                segundosRestantes = 0;
+                tiempoCumplido = true;
+                hiloTiempo.terminar(); // Matamos el hilo si terminó el tiempo
+            }
+        }
     }
 
     @Override
     public void render(float delta) {
-        // Limpiar pantalla
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Actualizar lógica
         update(delta);
 
-        // Renderizar fondo
         batch.begin();
         batch.setProjectionMatrix(camaraJuego.combined);
         mapa.renderFondo(batch, camaraJuego, viewportJuego);
         batch.end();
 
-        // Renderizar mapa
         mapa.renderMapa(camaraJuego);
 
-        // Renderizar personaje
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
         PERSONAJE_1.dibujar(batch);
         batch.end();
 
-        // Renderizar HUD
         HUD.render(batch);
     }
 
     public void update(float delta){
         Gdx.input.setInputProcessor(this.teclaListener);
 
-        // Manejar pausa
         if (teclaListener.isEscapeJustPressed()) {
             enPausa = !enPausa;
         }
@@ -83,44 +98,23 @@ public class PantallaJuego implements Screen {
         HUD.mostrarPausa(enPausa);
 
         if (!enPausa) {
-            tiempoTranscurrido += delta;
-            if (tiempoTranscurrido >= 60 && !tiempoCumplido) {
-                tiempoCumplido = true;
-            }
-
             // ---- INPUTS P1 ----
-
-            // Usamos "JustPressed" para saltar, para que no vuele si mantiene la tecla
             if (teclaListener.isP1ArribaJustPressed()) {
                 PERSONAJE_1.saltar();
             }
-
             if (teclaListener.isP1Izquierda()) {
                 PERSONAJE_1.caminarIzquierda();
             }
-
             if (teclaListener.isP1Derecha()) {
                 PERSONAJE_1.caminarDerecha();
             }
 
-            if (teclaListener.isP1Abajo()) {
-                // PERSONAJE_1.esquivar();
-            }
-
-            // ---- INPUTS P2 ----
-            /*
-            if (teclaListener.isP2ArribaJustPressed()) {
-                PERSONAJE_2.saltar();
-            }
-            ... etc
-            */
-
-            // --- ACTUALIZAR FÍSICAS (Aquí aplicamos gravedad y movimiento real) ---
+            // ---- FÍSICAS ----
             PERSONAJE_1.update(delta, mapa.getColisiones());
-            // PERSONAJE_2.update(delta, mapa.getColisiones());
         }
 
-        HUD.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));
+        // Actualizamos el HUD con la variable que modifica el Hilo
+        HUD.setTiempoRestante(segundosRestantes);
     }
 
     public boolean terminoElTiempo() {
@@ -139,12 +133,10 @@ public class PantallaJuego implements Screen {
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void show(){
-
     }
 
     @Override
@@ -157,5 +149,10 @@ public class PantallaJuego implements Screen {
         mapa.dispose();
         HUD.dispose();
         batch.dispose();
+
+        // Importante: Detener el hilo al cerrar para que no siga corriendo en la nada
+        if (hiloTiempo != null) {
+            hiloTiempo.terminar();
+        }
     }
 }
