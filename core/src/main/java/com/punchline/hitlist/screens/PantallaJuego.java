@@ -91,7 +91,24 @@ public class PantallaJuego implements Screen {
                 tiempoCumplido = true;
             }
 
-            this.PERSONAJE_1.realizarMovimientos(mapa.getColisiones());
+            // PERSONAJE 1 MOVIMIENTOS (Local)
+            if (this.teclaListener.isArriba()) {
+                this.PERSONAJE_1.saltar(mapa.getColisiones());
+            }
+
+            if (this.teclaListener.isAbajo()) {
+                this.PERSONAJE_1.esquivar(mapa.getColisiones());
+            }
+
+            if (this.teclaListener.isIzquierda() && !this.teclaListener.isDerecha() ) {
+                this.PERSONAJE_1.caminarIzquierda(mapa.getColisiones());
+            }
+
+            if (this.teclaListener.isDerecha() && !this.teclaListener.isIzquierda() ) {
+                this.PERSONAJE_1.caminarDerecha(mapa.getColisiones());
+            }
+
+
         }
 
         HUD.setTiempoRestante(Math.max(0, 60 - tiempoTranscurrido));

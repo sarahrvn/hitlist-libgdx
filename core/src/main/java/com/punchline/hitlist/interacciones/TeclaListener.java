@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 
 public class TeclaListener implements InputProcessor {
     private boolean arriba = false, abajo = false;
+    private boolean izquierda = false, derecha = false;
     private boolean espacio = false, enter = false;
     private boolean escape = false;
 
@@ -23,6 +24,14 @@ public class TeclaListener implements InputProcessor {
         if(keycode==Keys.S || keycode==Keys.DOWN) {
             this.abajo = true;
             this.abajoJustPressed = true;
+        }
+
+        if(keycode==Keys.A || keycode==Keys.LEFT) {
+            this.izquierda = true;
+        }
+
+        if(keycode==Keys.D || keycode==Keys.RIGHT) {
+            this.derecha = true;
         }
 
         if(keycode==Keys.SPACE) {
@@ -68,6 +77,12 @@ public class TeclaListener implements InputProcessor {
     public boolean isAbajo() {
         return this.abajo;
     }
+
+    public boolean isIzquierda() {
+        return this.izquierda;
+    }
+
+    public boolean isDerecha() { return this.derecha; }
 
     public boolean isEnter() {
         return this.enter;

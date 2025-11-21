@@ -46,7 +46,29 @@ public class Personaje {
         sprite.draw(batch);
     }
 
-    public void realizarMovimientos(Array<Rectangle> colisiones) {
+
+    public void saltar(Array<Rectangle> colisiones) {
+
+        if (saltos < 2) {
+            velocidadY = VELOCIDAD_SALTO;
+            saltos ++;
+        } else {
+            for (Rectangle colision : colisiones) {
+//            if (boundingBox.overlaps(colision)) {
+//                if (velocidadY < 0) {
+//                    enElSuelo = true;
+//                } else {
+//                    enElSuelo = false;
+//                }
+//                boundingBox.y -= dy;
+//                velocidadY = 0;
+//                break;
+//            }
+//        }
+        }
+    }
+
+//    public void realizarMovimientos(Array<Rectangle> colisiones) {
 //        boolean saltar = Gdx.input.isKeyPressed(Input.Keys.W);
 //        boolean izquierda = Gdx.input.isKeyPressed(Input.Keys.A);
 //        boolean derecha = Gdx.input.isKeyPressed(Input.Keys.D);
