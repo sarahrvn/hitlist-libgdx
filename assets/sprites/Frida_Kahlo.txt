@@ -1,0 +1,16 @@
+Frida_Kahlo.png
+size:256,64
+repeat:none
+correr1
+bounds:68,2,28,48
+correr2
+bounds:36,2,30,48
+idle
+bounds:154,2,18,48
+punch1
+bounds:2,2,32,48
+punch2
+bounds:98,2,25,48
+salto
+bounds:125,5,27,45
+offsets:0,0,27,48

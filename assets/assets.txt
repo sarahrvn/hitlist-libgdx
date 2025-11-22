@@ -1,0 +1,40 @@
+botones/Gemini_Generated_Image_kh8vgfkh8vgfkh8v.png
+fondos/Fondo_Menu.png
+fondos/Fondo_Menu2.png
+hud/corazon_amarillo.png
+hud/corazon_amarilloo.png
+logos/Hitlist_Titulo.png
+logos/Punchline_Logo.png
+logos/Titulo_Mas_Chico.png
+mapas/mapa_alfombra_roja.png
+mapas/mapa_alfombra_roja.tmx
+mapas/mapa_alfombra_roja.tsx
+mapas/mapa_cartel.png
+mapas/mapa_cartel.tmx
+mapas/mapa_cartel.tsx
+mapas/mapa_concierto.png
+mapas/mapa_concierto.tmx
+mapas/mapa_concierto.tsx
+mapas/mapa_yate.png
+mapas/mapa_yate.tmx
+mapas/mapa_yate.tsx
+sprites/Billie preview.png
+sprites/Billie_Eilish.png
+sprites/Billie_Eilish.txt
+sprites/Frida preview.png
+sprites/Frida_Kahlo.png
+sprites/Frida_Kahlo.txt
+sprites/Lebron preview.png
+sprites/Lebron_James.png
+sprites/Lebron_James.txt
+sprites/Michael preview.png
+sprites/Michael_Jackson.png
+sprites/Michael_Jackson.txt
+sprites/Sprite Sheet Billie.png
+sprites/Sprite Sheet Frida Kahlo.png
+sprites/Sprite Sheet Lebron James.png
+sprites/Sprite Sheet Michael Jackson.png
+sprites/Sprite Sheet Sabrina.png
+sprites/sabrina_carpenter.png
+sprites/sabrina_carpenter.txt
+sprites/tipazo.png
