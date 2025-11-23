@@ -11,8 +11,7 @@ public class Personaje {
     private final Rectangle boundingBox;
     private final TextureAtlas ATLAS;
 
-    // --- ESTADÍSTICAS ---
-    // Ahora son objetos dinámicos, no simples números
+    // Estadísticas
     private Estadistica fuerza;
     private Estadistica destreza;
     private Estadistica defensa;
@@ -22,7 +21,7 @@ public class Personaje {
     private float velocidadY = 0;
     private float velocidadX = 0;
 
-    // Variables dinámicas (calculadas en base a stats)
+    // Variables calculadas en base a stats
     private float velocidadCaminarActual;
 
     // Constantes fijas
@@ -33,7 +32,7 @@ public class Personaje {
     private boolean enElSuelo = false;
     private int saltosDisponibles = 2;
 
-    // Lógica de pared
+    // Lógica de pared (WALL SLIDE)
     private boolean tocandoPared = false;
     private int direccionPared = 0;
     private final float VELOCIDAD_DESLIZAMIENTO = -100;
@@ -49,7 +48,7 @@ public class Personaje {
         this.defensa = new Estadistica("Defensa", tipo.getDefensa());
         this.velocidad = new Estadistica("Velocidad", tipo.getVelocidad());
 
-        // Calcular atributos de los PJ según sus estadísticas
+        // Calcular atributos según estadísticas
         recalcularAtributos();
 
         // Hitbox
@@ -59,13 +58,13 @@ public class Personaje {
     private void recalcularAtributos() {
         // FÓRMULA DE VELOCIDAD:
         // Base 100 + (30 por cada punto de stat)
-        // Stat 1 (Lento) = 130 px/s
-        // Stat 5 (Normal) = 250 px/s
-        // Stat 10 (Rápido) = 400 px/s
         this.velocidadCaminarActual = 100f + (this.velocidad.getValor() * 30f);
     }
 
     public void update(float delta, Array<Rectangle> colisiones) {
+        // CLAMPING: Evitar deltas muy grandes que causen bugs
+        delta = Math.min(delta, 1/30f); // Máximo 0.033s por frame
+
         // 1. Mover en X y detectar paredes
         boundingBox.x += velocidadX * delta;
         checkColisionX(colisiones);
@@ -118,7 +117,7 @@ public class Personaje {
     }
 
     public void esquivar() {
-
+        // Implementar según necesites
     }
 
     // ---- COLISIONES ----
@@ -133,8 +132,7 @@ public class Personaje {
                     boundingBox.x = colision.x - boundingBox.width;
                     tocandoPared = true;
                     direccionPared = 1;
-                }
-                else if (velocidadX < 0) {
+                } else if (velocidadX < 0) {
                     boundingBox.x = colision.x + colision.width;
                     tocandoPared = true;
                     direccionPared = -1;
@@ -166,6 +164,10 @@ public class Personaje {
     public void setPosition(float x, float y) {
         boundingBox.setPosition(x, y);
         sprite.setPosition(x, y);
+    }
+
+    public Rectangle getBoundingRectangle() {
+        return boundingBox;
     }
 
     public void dispose() {

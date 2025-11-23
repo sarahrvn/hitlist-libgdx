@@ -1,0 +1,16 @@
+Michael_Jackson.png
+size:256,64
+repeat:none
+correr1
+bounds:46,2,34,48
+correr2
+bounds:117,2,30,48
+idle
+bounds:182,2,24,48
+punch1
+bounds:2,2,42,48
+punch2
+bounds:82,2,33,48
+salto
+bounds:149,5,31,45
+offsets:0,0,31,48

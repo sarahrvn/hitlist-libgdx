@@ -10,6 +10,9 @@ manera poco artística quién es el mejor.
 **Enlace a la Wiki del Proyecto (Propuesta detallada):** 
 [Más información](https://github.com/sarahrvn/hitlist-libgdx/wiki/Propuesta-del-Proyecto)
 
+**Enlace al Video Demostrativo del Proyecto (1° Adelanto):** 
+[Video](https://youtu.be/UXs8aZqhY_4)
+
 ## Integrantes
 
 • Orué Stocco, Thiago Iván
@@ -53,6 +56,6 @@ Este proyecto fue programado en el lenguaje `Java` utilizando el IDE `IntelliJ I
 
 ## Estado Actual del Proyecto
 
-• Configuración inicial y estructura del proyecto: ✔
+• Versión reducida y funcional: ✔
 
 

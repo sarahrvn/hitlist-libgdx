@@ -19,7 +19,7 @@ public class PantallaMenu {
 
     // Lógica de selección
     private int opcionSeleccionada = 0;
-    private final String[] opciones = {"Jugar", "Salir"};
+    private final String[] opciones = {"Local", "Online", "Salir"};
 
     // Input
     private final TeclaListener teclaListener;
@@ -38,39 +38,33 @@ public class PantallaMenu {
         FONDO = new Texture("fondos/Fondo_Menu.png");
         TITULO = new Texture("logos/Hitlist_Titulo.png");
 
-        // Inicializamos tu listener
         teclaListener = new TeclaListener();
-        // ¡IMPORTANTE! Decirle a LibGDX que use este listener ahora
         Gdx.input.setInputProcessor(teclaListener);
 
-        // --- GENERACIÓN DE FUENTE HD ---
-        // Esto soluciona el problema de la "pésima calidad".
-        // Debes tener un archivo .ttf en tu carpeta assets (ej: assets/fuentes/arial.ttf)
-        // Si no tienes uno, descarga cualquier fuente gratuita de Google Fonts.
+        // Fuente
         try {
-            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fuentes/tu_fuente.ttf"));
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fuentes/ari-w9500.ttf"));
             FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-            parameter.size = 40; // Tamaño real en píxeles (HD)
+            parameter.size = 40;
             parameter.borderWidth = 2;
             parameter.borderColor = Color.BLACK;
             parameter.shadowOffsetX = 3;
             parameter.shadowOffsetY = 3;
 
             font = generator.generateFont(parameter);
-            generator.dispose(); // Importante limpiar el generador
+            generator.dispose(); // Limpia el generador
         } catch (Exception e) {
-            // Fallback por si no tienes el archivo .ttf aún
-            System.out.println("No se encontró fuente .ttf, usando default (baja calidad)");
+            System.out.println("No se encontró fuente .ttf");
             font = new BitmapFont();
-            font.getData().setScale(3f); // Esto es lo que causaba la pixelación
+            font.getData().setScale(3f);
         }
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camara) {
-        // 1. Input
+        // Input
         manejarInput();
 
-        // 2. Actualizar tiempo para la animación
+        // ctualiza tiempo para la animación
         tiempoAnimacion += Gdx.graphics.getDeltaTime();
 
         batch.setProjectionMatrix(camara.combined);
@@ -87,7 +81,7 @@ public class PantallaMenu {
         batch.draw(TITULO, tituloX, tituloY, tituloAncho, tituloAlto);
 
 
-        // --- OPCIONES CON ANIMACIÓN ---
+        // ---- OPCIONES CON ANIMACIÓN ----
         float centroXPantalla = camara.viewportWidth / 2f;
         float yBase = tituloY - 100f;
 
@@ -98,9 +92,8 @@ public class PantallaMenu {
                 font.setColor(Color.ORANGE);
                 textoADibujar = "<< " + textoADibujar + " >>";
 
-                // ANIMACIÓN:
-                // Variamos la escala entre 1.0 y 1.2 (si usas FreeType)
-                // Si usas la fuente default pixelada, cambia el 1.0f base por 3.0f
+                // Varía la escala entre 1.0 y 1.2
+                // Si usa la fuente default sin el .ttf cambia el 1.0f base por 3.0f
                 float escalaBase = 1.0f;
                 float variacion = (float)Math.sin(tiempoAnimacion * 6) * 0.1f; // Velocidad 6, Intensidad 0.1
 
@@ -112,8 +105,6 @@ public class PantallaMenu {
                 font.getData().setScale(1.0f);
             }
 
-            // IMPORTANTE: Medir el texto DESPUÉS de aplicar el setScale
-            // Si no, el centrado quedaría desfasado cuando el texto crece
             layout.setText(font, textoADibujar);
 
             float textoX = centroXPantalla - (layout.width / 2f);
@@ -126,13 +117,13 @@ public class PantallaMenu {
     }
 
     private void manejarInput() {
-        // Moverse arriba (W o Flecha arriba)
+        // Moverse arriba (W o Flechita arriba)
         if (teclaListener.isArribaJustPressed()) {
             opcionSeleccionada--;
             if (opcionSeleccionada < 0) opcionSeleccionada = opciones.length - 1;
         }
 
-        // Moverse abajo (S o Flecha abajo)
+        // Moverse abajo (S o Flechita abajo)
         if (teclaListener.isAbajoJustPressed()) {
             opcionSeleccionada++;
             if (opcionSeleccionada >= opciones.length) opcionSeleccionada = 0;

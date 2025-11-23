@@ -1,0 +1,16 @@
+Billie_Eilish.png
+size:256,64
+repeat:none
+correr1
+bounds:120,2,30,48
+correr2
+bounds:46,2,37,48
+idle
+bounds:152,2,23,48
+punch1
+bounds:2,2,42,48
+punch2
+bounds:85,2,33,48
+salto
+bounds:177,5,23,45
+offsets:0,0,23,48

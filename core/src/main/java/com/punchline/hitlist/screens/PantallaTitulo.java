@@ -44,7 +44,7 @@ public class PantallaTitulo {
         }
     }
 
-    public boolean SaltarAJuego() {
+    public boolean SaltarAMenu() {
         return PaseAMenu;
     }
 

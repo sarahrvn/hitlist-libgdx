@@ -1,7 +1,6 @@
 package com.punchline.hitlist.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,13 +8,13 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.punchline.hitlist.elementosJuego.Mapa;
 import com.punchline.hitlist.elementosJuego.MapaDisponible;
-import com.punchline.hitlist.interacciones.TeclaListener;
 import com.punchline.hitlist.personajes.Personaje;
 import com.punchline.hitlist.personajes.TipoPersonaje;
 import com.punchline.hitlist.elementosJuego.Hud;
-import com.punchline.hitlist.utils.HiloTiempo; // Importamos tu nuevo hilo
+import com.punchline.hitlist.interacciones.TeclaListener;
+import com.punchline.hitlist.interacciones.HiloTiempo;
 
-public class PantallaJuego implements Screen {
+public class PantallaJuego {
 
     private Mapa mapa;
     private final Personaje PERSONAJE_1;
@@ -24,36 +23,38 @@ public class PantallaJuego implements Screen {
     private final Viewport viewportJuego;
     private boolean enPausa = false;
 
-    // Variables de Tiempo
+    // Variables de Tiempo con Hilo
     private int segundosRestantes = 60;
     private boolean tiempoCumplido = false;
-    private HiloTiempo hiloTiempo; // Referencia al hilo
+    private HiloTiempo hiloTiempo;
 
-    private TeclaListener teclaListener = new TeclaListener();
+    private TeclaListener teclaListener;
     private SpriteBatch batch;
 
-    public PantallaJuego() {
-        mapa = new Mapa(MapaDisponible.MAPA_CIUDAD);
-        PERSONAJE_1 = new Personaje(TipoPersonaje.SABRINA_CARPENTER);
+    // Constructor modificado para recibir el mapa y personaje seleccionados
+    public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje personajeSeleccionado) {
+        mapa = new Mapa(mapaSeleccionado);
+        PERSONAJE_1 = new Personaje(personajeSeleccionado);
         HUD = new Hud();
 
         camaraJuego = new OrthographicCamera();
-        viewportJuego = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camaraJuego);
+        viewportJuego = new StretchViewport(1024, 576, camaraJuego);
         viewportJuego.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
 
-        PERSONAJE_1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 2f);
+        PERSONAJE_1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 1.2f);
 
         batch = new SpriteBatch();
+        teclaListener = new TeclaListener();
 
-        // INICIAMOS EL HILO AL ESTILO DE TU PROFESOR
+        // INICIAMOS EL HILO DE TIEMPO
         hiloTiempo = new HiloTiempo(this);
         hiloTiempo.start();
     }
 
-    // Este es el método que llama el Hilo cada 1 segundo
+    // Método llamado por el HiloTiempo cada segundo
     public void procesarSegundo() {
         if (!enPausa && !tiempoCumplido) {
             segundosRestantes--;
@@ -61,12 +62,11 @@ public class PantallaJuego implements Screen {
             if (segundosRestantes <= 0) {
                 segundosRestantes = 0;
                 tiempoCumplido = true;
-                hiloTiempo.terminar(); // Matamos el hilo si terminó el tiempo
+                hiloTiempo.terminar();
             }
         }
     }
 
-    @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -88,7 +88,7 @@ public class PantallaJuego implements Screen {
         HUD.render(batch);
     }
 
-    public void update(float delta){
+    public void update(float delta) {
         Gdx.input.setInputProcessor(this.teclaListener);
 
         if (teclaListener.isEscapeJustPressed()) {
@@ -98,7 +98,7 @@ public class PantallaJuego implements Screen {
         HUD.mostrarPausa(enPausa);
 
         if (!enPausa) {
-            // ---- INPUTS P1 ----
+            // INPUTS P1
             if (teclaListener.isP1ArribaJustPressed()) {
                 PERSONAJE_1.saltar();
             }
@@ -109,7 +109,7 @@ public class PantallaJuego implements Screen {
                 PERSONAJE_1.caminarDerecha();
             }
 
-            // ---- FÍSICAS ----
+            // FÍSICAS
             PERSONAJE_1.update(delta, mapa.getColisiones());
         }
 
@@ -121,36 +121,19 @@ public class PantallaJuego implements Screen {
         return tiempoCumplido;
     }
 
-    @Override
-    public void resize(int width, int height) {
+    public void ajustarCamara(int width, int height) {
         viewportJuego.update(width, height, true);
+        camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
+        camaraJuego.update();
     }
 
-    @Override
-    public void pause() {
-        enPausa = true;
-    }
 
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void show(){
-    }
-
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-    }
-
-    @Override
     public void dispose() {
         mapa.dispose();
         HUD.dispose();
         batch.dispose();
 
-        // Importante: Detener el hilo al cerrar para que no siga corriendo en la nada
+        // Detener el hilo al cerrar
         if (hiloTiempo != null) {
             hiloTiempo.terminar();
         }

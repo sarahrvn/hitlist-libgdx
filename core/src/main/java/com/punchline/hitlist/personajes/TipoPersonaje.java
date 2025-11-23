@@ -1,14 +1,17 @@
 package com.punchline.hitlist.personajes;
 
+
 public enum TipoPersonaje {
-    TIPAZO("Tipazo", 10, 10, 10, 10, "sprites/tipazo.png"),
-    SABRINA_CARPENTER("Sabrina Carpenter", 5, 7, 3, 4, "sprites/sabrina_carpenter.txt"),
-    RICARDO_FORT("Ricardo Fort", 3, 5, 7, 6, "sprites/ricardo_fort.png"),
-    VEGETTA777("Vegetta777", 8, 4, 2, 2, "sprites/vegetta777.png");
+    BILLIE_EILISH("Billie Eilish", 10, 10, 10, 10, "sprites/Billie_Eilish.txt"),
+    MICHAEL_JACKSON("Michael Jackson", 5, 7, 3, 4, "sprites/Michael_Jackson.txt"),
+    FRIDA_KAHLO("Frida Kahlo", 3, 5, 7, 6, "sprites/Frida_Kahlo.txt"),
+    LEBRON_JAMES("Lebron James", 8, 4, 2, 2, "sprites/Lebron_James.txt");
+
 
     private final String NOMBRE;
     private final int FUERZA, DESTREZA, DEFENSA, VELOCIDAD;
     private final String RUTASPRITE;
+
 
     TipoPersonaje(String nombre, int fuerza, int destreza, int defensa, int velocidad, String rutaSprite) {
         this.NOMBRE = nombre;
@@ -19,25 +22,31 @@ public enum TipoPersonaje {
         this.RUTASPRITE = rutaSprite;
     }
 
+
     public String getNombre() {
         return this.NOMBRE;
     }
+
 
     public int getFuerza() {
         return this.FUERZA;
     }
 
+
     public int getDestreza() {
         return this.DESTREZA;
     }
+
 
     public int getDefensa() {
         return this.DEFENSA;
     }
 
+
     public int getVelocidad() {
         return this.VELOCIDAD;
     }
+
 
     public String getRutaSprite() {
         return this.RUTASPRITE;

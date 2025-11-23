@@ -1,11 +1,11 @@
-package com.punchline.hitlist.utils;
+package com.punchline.hitlist.interacciones;
 
 import com.punchline.hitlist.screens.PantallaJuego;
 
 public class HiloTiempo extends Thread {
 
     private PantallaJuego pantallaJuego;
-    private boolean ejecutando = true;
+    private boolean corriendo = true;
 
     public HiloTiempo(PantallaJuego pantallaJuego) {
         this.pantallaJuego = pantallaJuego;
@@ -13,22 +13,22 @@ public class HiloTiempo extends Thread {
 
     @Override
     public void run() {
-        while (ejecutando) {
+        while (corriendo) {
             try {
-                // Esperar 1 segundo (1000 milisegundos)
-                Thread.sleep(1000);
+                Thread.sleep(1000); // Espera 1 segundo
 
-                // Llamar al método de la pantalla para restar el tiempo
-                if (ejecutando) {
+                if (corriendo) {
                     pantallaJuego.procesarSegundo();
                 }
+
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                corriendo = false;
             }
         }
     }
 
     public void terminar() {
-        this.ejecutando = false;
+        corriendo = false;
+        this.interrupt();
     }
 }

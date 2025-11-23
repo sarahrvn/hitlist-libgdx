@@ -1,0 +1,15 @@
+Lebron_James.png
+size:256,64
+repeat:none
+correr1
+bounds:85,2,38,48
+correr2
+bounds:44,2,39,48
+idle
+bounds:125,2,28,48
+punch1
+bounds:2,2,40,48
+punch2
+bounds:155,2,27,48
+salto
+bounds:184,2,18,48
