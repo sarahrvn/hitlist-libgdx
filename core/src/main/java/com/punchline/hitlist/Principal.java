@@ -128,7 +128,7 @@ public class Principal extends ApplicationAdapter {
 
             case JUEGO:
                 pantallaJuego.render(delta);
-                if (pantallaJuego.terminoElTiempo()) {
+                if (pantallaJuego.debeVolverAlMenu()) {
                     pantallaMenu = new PantallaMenu();
                     estadoActual = EstadoScreen.MENU;
                     pantallaJuego = null;
