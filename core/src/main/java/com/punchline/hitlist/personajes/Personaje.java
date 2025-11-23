@@ -5,188 +5,200 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.punchline.hitlist.elementosJuego.GestorSonidos;
+import com.punchline.hitlist.elementosJuego.SonidoDisponible;
+import com.punchline.hitlist.elementosJuego.Arma;
 
 public class Personaje {
     private Sprite sprite;
     private final Rectangle boundingBox;
     private final TextureAtlas ATLAS;
+    private final TipoPersonaje TIPO_PERSONAJE;
 
-    // Estadísticas
     private Estadistica fuerza;
     private Estadistica destreza;
     private Estadistica defensa;
     private Estadistica velocidad;
 
-    // Físicas y movimiento
+    private Arma armaEquipada = null;
+
     private float velocidadY = 0;
     private float velocidadX = 0;
-
-    // Variables calculadas en base a stats
     private float velocidadCaminarActual;
-
-    // Constantes fijas
     private final float GRAVEDAD = -1500;
     private final float VELOCIDAD_SALTO = 540;
-
-    // Lógica de saltos
     private boolean enElSuelo = false;
     private int saltosDisponibles = 2;
-
-    // Lógica de pared (WALL SLIDE)
     private boolean tocandoPared = false;
-    private int direccionPared = 0;
-    private final float VELOCIDAD_DESLIZAMIENTO = -100;
     private boolean intentandoMoverse = false;
 
-    // Animación de correr
     private float tiempoAnimacionCorrer = 0f;
-    private final float TIEMPO_CAMBIO_SPRITE = 0.2f;
+    private final float TIEMPO_CAMBIO_SPRITE = 0.1f;
     private boolean usandoCorrer1 = true;
+    private float tiempoUltimoPaso = 0f;
+    private final float INTERVALO_PASOS = 0.1f;
 
     public Personaje(TipoPersonaje tipo) {
+        this.TIPO_PERSONAJE = tipo;
         this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
         this.sprite = ATLAS.createSprite("idle");
 
-        // Estadísticas
         this.fuerza = new Estadistica("Fuerza", tipo.getFuerza());
         this.destreza = new Estadistica("Destreza", tipo.getDestreza());
         this.defensa = new Estadistica("Defensa", tipo.getDefensa());
         this.velocidad = new Estadistica("Velocidad", tipo.getVelocidad());
 
-        // Calcular atributos según estadísticas
         recalcularAtributos();
-
-        // Hitbox
         boundingBox = new Rectangle(0, 0, sprite.getWidth(), sprite.getHeight());
     }
 
+    public Arma getArmaAsignada() {
+        return TIPO_PERSONAJE.getArmaAsignada();
+    }
+
     private void recalcularAtributos() {
-        // FÓRMULA DE VELOCIDAD:
-        // Base 100 + (30 por cada punto de stat)
+        int fBase = TIPO_PERSONAJE.getFuerza();
+        int dBase = TIPO_PERSONAJE.getDefensa();
+        int vBase = TIPO_PERSONAJE.getVelocidad();
+
+        int modF = 0, modD = 0, modV = 0;
+
+        if (armaEquipada != null) {
+            modF = limitarModificador(armaEquipada.getModFuerza());
+            modD = limitarModificador(armaEquipada.getModDefensa());
+            modV = limitarModificador(armaEquipada.getModVelocidad());
+        }
+
+        this.fuerza.setEstadistica(fBase + modF);
+        this.defensa.setEstadistica(dBase + modD);
+        this.velocidad.setEstadistica(vBase + modV);
+
         this.velocidadCaminarActual = 100f + (this.velocidad.getValor() * 30f);
     }
 
-    public void update(float delta, Array<Rectangle> colisiones) {
+    private int limitarModificador(int valor) {
+        if (valor > 2) return 2;
+        if (valor < -2) return -2;
+        return valor;
+    }
 
-        // Actualizar timer de animación si se está moviendo
+    public void equiparArma(Arma arma) {
+        this.armaEquipada = arma;
+        recalcularAtributos();
+        actualizarSpriteVisual();
+    }
+
+    private void actualizarSpriteVisual() {
+        boolean flip = sprite.isFlipX();
+        String nombreRegion;
+
         if (intentandoMoverse) {
-            tiempoAnimacionCorrer += delta;
-
-            // Cambiar sprite cada medio segundo
-            if (tiempoAnimacionCorrer >= TIEMPO_CAMBIO_SPRITE) {
-                tiempoAnimacionCorrer = 0f;
-                usandoCorrer1 = !usandoCorrer1; // Alternar entre correr1 y correr2
-
-                // Actualizar el sprite actual
-                String nombreSprite = usandoCorrer1 ? "correr1" : "correr2";
-                boolean estabaFlipeado = sprite.isFlipX();
-                sprite = ATLAS.createSprite(nombreSprite);
-
-                // Mantener la dirección del flip
-                if (estabaFlipeado && !sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                } else if (!estabaFlipeado && sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                }
+            if (usandoCorrer1) {
+                if (armaEquipada != null) nombreRegion = "correr1_arma";
+                else nombreRegion = "correr1";
+            } else {
+                if (armaEquipada != null) nombreRegion = "correr2_arma";
+                else nombreRegion = "correr2";
             }
+        } else {
+            if (armaEquipada != null) nombreRegion = "idle_arma";
+            else nombreRegion = "idle";
         }
 
-        // 1. Mover en X y detectar paredes
+        Sprite nuevo = ATLAS.createSprite(nombreRegion);
+        if (nuevo == null) {
+            nuevo = ATLAS.createSprite(nombreRegion.replace("_arma", ""));
+        }
+
+        this.sprite = nuevo;
+        if (flip && !sprite.isFlipX()) sprite.flip(true, false);
+        else if (!flip && sprite.isFlipX()) sprite.flip(true, false);
+
+        sprite.setPosition(boundingBox.x, boundingBox.y);
+    }
+
+    public void update(float delta, Array<Rectangle> colisiones) {
+        delta = Math.min(delta, 1/30f);
+
+        if (intentandoMoverse) {
+            tiempoAnimacionCorrer += delta;
+            tiempoUltimoPaso += delta;
+            if (enElSuelo && tiempoUltimoPaso >= INTERVALO_PASOS) {
+                tiempoUltimoPaso = 0f;
+            }
+            if (tiempoAnimacionCorrer >= TIEMPO_CAMBIO_SPRITE) {
+                tiempoAnimacionCorrer = 0f;
+                usandoCorrer1 = !usandoCorrer1;
+                actualizarSpriteVisual();
+            }
+        } else {
+            actualizarSpriteVisual();
+        }
+
+        boolean estabaEnElAire = !enElSuelo;
         boundingBox.x += velocidadX * delta;
         checkColisionX(colisiones);
 
-        // 2. Lógica de wall slide
         boolean agarradoPared = !enElSuelo && tocandoPared && velocidadY < 0 && intentandoMoverse;
-
         if (agarradoPared) {
-            velocidadY = VELOCIDAD_DESLIZAMIENTO;
+            velocidadY = -100;
             saltosDisponibles = 2;
         } else {
             velocidadY += GRAVEDAD * delta;
         }
 
-        // 3. Mover en Y
         boundingBox.y += velocidadY * delta;
         checkColisionY(colisiones);
 
-        // 4. Actualizar sprite
-        sprite.setPosition(boundingBox.x, boundingBox.y);
+        if (estabaEnElAire && enElSuelo && velocidadY <= 0) {
+            GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.CAIDA, 0.4f);
+        }
 
+        sprite.setPosition(boundingBox.x, boundingBox.y);
         velocidadX = 0;
         intentandoMoverse = false;
     }
 
-    public void dibujar(SpriteBatch batch) {
-        sprite.draw(batch);
-    }
-
-    // ---- CONTROLES ----
+    public void dibujar(SpriteBatch batch) { sprite.draw(batch); }
 
     public void saltar() {
         if (saltosDisponibles > 0) {
             velocidadY = VELOCIDAD_SALTO;
             saltosDisponibles--;
             enElSuelo = false;
+            GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.SALTO, 0.5f);
         }
     }
-
     public void caminarIzquierda() {
         velocidadX = -velocidadCaminarActual;
         intentandoMoverse = true;
-
-        // Solo cambiar sprite si no estaba moviéndose antes (para evitar resetear la animación)
-        if (velocidadX == 0) {
-            sprite = ATLAS.createSprite("correr1");
-            usandoCorrer1 = true;
-            tiempoAnimacionCorrer = 0f;
-        }
-
+        if (velocidadX == 0) actualizarSpriteVisual();
         if (!sprite.isFlipX()) sprite.flip(true, false);
     }
-
     public void caminarDerecha() {
         velocidadX = velocidadCaminarActual;
         intentandoMoverse = true;
-
-        // Solo cambiar sprite si no estaba moviéndose antes (para evitar resetear la animación)
-        if (velocidadX == 0) {
-            sprite = ATLAS.createSprite("correr1");
-            usandoCorrer1 = true;
-            tiempoAnimacionCorrer = 0f;
-        }
-
+        if (velocidadX == 0) actualizarSpriteVisual();
         if (sprite.isFlipX()) sprite.flip(true, false);
     }
 
-    public void esquivar() {
-        // Implementar según necesites
-    }
-
-    // ---- COLISIONES ----
-
     private void checkColisionX(Array<Rectangle> colisiones) {
         tocandoPared = false;
-        direccionPared = 0;
-
         for (Rectangle colision : colisiones) {
             if (boundingBox.overlaps(colision)) {
                 if (velocidadX > 0) {
                     boundingBox.x = colision.x - boundingBox.width;
                     tocandoPared = true;
-                    direccionPared = 1;
                 } else if (velocidadX < 0) {
                     boundingBox.x = colision.x + colision.width;
                     tocandoPared = true;
-                    direccionPared = -1;
                 }
                 break;
             }
         }
     }
-
     private void checkColisionY(Array<Rectangle> colisiones) {
         enElSuelo = false;
-
         for (Rectangle colision : colisiones) {
             if (boundingBox.overlaps(colision)) {
                 if (velocidadY < 0) {
@@ -204,43 +216,26 @@ public class Personaje {
     }
 
     public void setPosition(float x, float y) {
-        boundingBox.setPosition(x, y);
-        sprite.setPosition(x, y);
+        boundingBox.setPosition(x - boundingBox.width / 2f, y - boundingBox.height / 2f);
+        sprite.setPosition(boundingBox.x, boundingBox.y);
     }
+    public Rectangle getHitbox() { return boundingBox; }
 
-    public Rectangle getBoundingRectangle() {
-        return boundingBox;
-    }
-
-    // ---- MÉTODOS PARA SISTEMA DE RESPAWN ----
-
-    /**
-     * Obtiene la hitbox del personaje para detectar colisiones con el vacío
-     */
-    public Rectangle getHitbox() {
-        return boundingBox;
-    }
-
-    /**
-     * Resetea las velocidades al respawnear para evitar que el personaje
-     * siga cayendo o moviéndose después del respawn
-     */
+    // --- MODIFICADO: ELIMINA EL ARMA AL RESPAWNEAR ---
     public void resetearVelocidad() {
         velocidadX = 0;
         velocidadY = 0;
         enElSuelo = false;
         saltosDisponibles = 2;
-        tocandoPared = false;
-        direccionPared = 0;
         intentandoMoverse = false;
 
-        // Resetear animación a idle
-        tiempoAnimacionCorrer = 0f;
-        usandoCorrer1 = true;
-        sprite = ATLAS.createSprite("idle");
+        // Quitamos el arma
+        this.armaEquipada = null;
+        // Reseteamos stats a base
+        recalcularAtributos();
+
+        actualizarSpriteVisual();
     }
 
-    public void dispose() {
-        ATLAS.dispose();
-    }
+    public void dispose() { ATLAS.dispose(); }
 }

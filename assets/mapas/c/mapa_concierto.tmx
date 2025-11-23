@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="167">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="171">
  <tileset firstgid="1" source="mapa_concierto.tsx"/>
  <layer id="1" name="Capa de patrones 1" width="32" height="18">
   <data encoding="csv">
@@ -45,9 +45,9 @@
   <object id="142" x="221.25" y="244.625" width="39" height="5.5"/>
   <object id="143" x="228.25" y="245.625" width="30" height="10"/>
   <object id="144" x="231.75" y="254.125" width="15.5" height="12"/>
-  <object id="145" x="387.25" y="255.625" width="33.25" height="257.25"/>
-  <object id="146" x="418.5" y="255.625" width="139.068" height="9.5"/>
-  <object id="147" x="556.267" y="255.627" width="33.3921" height="255.748"/>
+  <object id="145" x="387.25" y="260.625" width="33.25" height="252.25"/>
+  <object id="146" x="387.53" y="255.637" width="201.99" height="9.48828"/>
+  <object id="147" x="556.267" y="262.752" width="33.3921" height="248.623"/>
   <object id="148" x="694.75" y="340.625" width="205" height="34"/>
   <object id="149" x="703.75" y="371.625" width="186" height="11"/>
   <object id="150" x="710.75" y="378.625" width="167" height="13"/>
@@ -69,9 +69,9 @@
   <object id="166" x="781.5" y="158.625" width="33.25" height="6.5"/>
  </objectgroup>
  <objectgroup id="3" name="Vacio">
-  <object id="120" x="-102.998" y="-135.333" width="1373.33" height="60"/>
-  <object id="121" x="1080.33" y="-135" width="189.5" height="862"/>
-  <object id="122" x="-262.332" y="-136" width="192" height="862.667"/>
-  <object id="123" x="-107.666" y="662.667" width="1221.33" height="65.3333"/>
+  <object id="167" x="-97.9071" y="-143.454" width="1373.33" height="60"/>
+  <object id="168" x="1085.42" y="-143.121" width="189.5" height="862"/>
+  <object id="169" x="-257.241" y="-144.121" width="192" height="862.667"/>
+  <object id="170" x="-102.575" y="654.546" width="1221.33" height="65.3333"/>
  </objectgroup>
 </map>
