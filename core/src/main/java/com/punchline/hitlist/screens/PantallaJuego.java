@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.punchline.hitlist.elementosJuego.Mapa;
@@ -31,6 +33,12 @@ public class PantallaJuego {
     private TeclaListener teclaListener;
     private SpriteBatch batch;
 
+    // Posición de spawn
+    private final Vector2 POSICION_SPAWN;
+
+    // NUEVO - Variable para controlar si debe volver al menú
+    private boolean volverAlMenu = false;
+
     // Constructor modificado para recibir el mapa y personaje seleccionados
     public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje personajeSeleccionado) {
         mapa = new Mapa(mapaSeleccionado);
@@ -44,7 +52,8 @@ public class PantallaJuego {
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
 
-        PERSONAJE_1.setPosition(mapa.getAncho() / 2f, mapa.getAlto() / 1.2f);
+        POSICION_SPAWN = new Vector2(mapa.getAncho() / 2f, mapa.getAlto() / 1.2f);
+        PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
 
         batch = new SpriteBatch();
         teclaListener = new TeclaListener();
@@ -62,6 +71,7 @@ public class PantallaJuego {
             if (segundosRestantes <= 0) {
                 segundosRestantes = 0;
                 tiempoCumplido = true;
+                volverAlMenu = true;
                 hiloTiempo.terminar();
             }
         }
@@ -111,14 +121,53 @@ public class PantallaJuego {
 
             // FÍSICAS
             PERSONAJE_1.update(delta, mapa.getColisiones());
+
+            // Verificar colisión con vacío
+            verificarColisionVacio();
         }
 
         // Actualizamos el HUD con la variable que modifica el Hilo
         HUD.setTiempoRestante(segundosRestantes);
     }
 
+    // Método para verificar si el personaje toca el vacío
+    private void verificarColisionVacio() {
+        Rectangle hitboxPersonaje = PERSONAJE_1.getHitbox();
+
+        for (Rectangle vacio : mapa.getColisionesVacio()) {
+            if (hitboxPersonaje.overlaps(vacio)) {
+                respawnearPersonaje();
+                break;
+            }
+        }
+    }
+
+    // Método para respawnear el personaje
+    private void respawnearPersonaje() {
+        // Quitar una vida
+        boolean sigueTeniendoVidas = HUD.quitarVida();
+
+        if (sigueTeniendoVidas) {
+            // Si todavía tiene vidas, respawnear
+            PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
+            PERSONAJE_1.resetearVelocidad();
+        } else {
+            // Si ya no tiene vidas, marcar para volver al menú
+            volverAlMenu = true;
+            // Detener el hilo de tiempo
+            if (hiloTiempo != null) {
+                hiloTiempo.terminar();
+            }
+        }
+    }
+
     public boolean terminoElTiempo() {
         return tiempoCumplido;
+    }
+
+    // NUEVO - Método para verificar si debe volver al menú
+    public boolean debeVolverAlMenu() {
+        return volverAlMenu;
     }
 
     public void ajustarCamara(int width, int height) {
@@ -126,7 +175,6 @@ public class PantallaJuego {
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
     }
-
 
     public void dispose() {
         mapa.dispose();

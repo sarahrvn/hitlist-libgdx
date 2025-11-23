@@ -38,6 +38,11 @@ public class Personaje {
     private final float VELOCIDAD_DESLIZAMIENTO = -100;
     private boolean intentandoMoverse = false;
 
+    // Animación de correr
+    private float tiempoAnimacionCorrer = 0f;
+    private final float TIEMPO_CAMBIO_SPRITE = 0.2f;
+    private boolean usandoCorrer1 = true;
+
     public Personaje(TipoPersonaje tipo) {
         this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
         this.sprite = ATLAS.createSprite("idle");
@@ -62,8 +67,29 @@ public class Personaje {
     }
 
     public void update(float delta, Array<Rectangle> colisiones) {
-        // CLAMPING: Evitar deltas muy grandes que causen bugs
-        delta = Math.min(delta, 1/30f); // Máximo 0.033s por frame
+
+        // Actualizar timer de animación si se está moviendo
+        if (intentandoMoverse) {
+            tiempoAnimacionCorrer += delta;
+
+            // Cambiar sprite cada medio segundo
+            if (tiempoAnimacionCorrer >= TIEMPO_CAMBIO_SPRITE) {
+                tiempoAnimacionCorrer = 0f;
+                usandoCorrer1 = !usandoCorrer1; // Alternar entre correr1 y correr2
+
+                // Actualizar el sprite actual
+                String nombreSprite = usandoCorrer1 ? "correr1" : "correr2";
+                boolean estabaFlipeado = sprite.isFlipX();
+                sprite = ATLAS.createSprite(nombreSprite);
+
+                // Mantener la dirección del flip
+                if (estabaFlipeado && !sprite.isFlipX()) {
+                    sprite.flip(true, false);
+                } else if (!estabaFlipeado && sprite.isFlipX()) {
+                    sprite.flip(true, false);
+                }
+            }
+        }
 
         // 1. Mover en X y detectar paredes
         boundingBox.x += velocidadX * delta;
@@ -107,12 +133,28 @@ public class Personaje {
     public void caminarIzquierda() {
         velocidadX = -velocidadCaminarActual;
         intentandoMoverse = true;
+
+        // Solo cambiar sprite si no estaba moviéndose antes (para evitar resetear la animación)
+        if (velocidadX == 0) {
+            sprite = ATLAS.createSprite("correr1");
+            usandoCorrer1 = true;
+            tiempoAnimacionCorrer = 0f;
+        }
+
         if (!sprite.isFlipX()) sprite.flip(true, false);
     }
 
     public void caminarDerecha() {
         velocidadX = velocidadCaminarActual;
         intentandoMoverse = true;
+
+        // Solo cambiar sprite si no estaba moviéndose antes (para evitar resetear la animación)
+        if (velocidadX == 0) {
+            sprite = ATLAS.createSprite("correr1");
+            usandoCorrer1 = true;
+            tiempoAnimacionCorrer = 0f;
+        }
+
         if (sprite.isFlipX()) sprite.flip(true, false);
     }
 
@@ -168,6 +210,34 @@ public class Personaje {
 
     public Rectangle getBoundingRectangle() {
         return boundingBox;
+    }
+
+    // ---- MÉTODOS PARA SISTEMA DE RESPAWN ----
+
+    /**
+     * Obtiene la hitbox del personaje para detectar colisiones con el vacío
+     */
+    public Rectangle getHitbox() {
+        return boundingBox;
+    }
+
+    /**
+     * Resetea las velocidades al respawnear para evitar que el personaje
+     * siga cayendo o moviéndose después del respawn
+     */
+    public void resetearVelocidad() {
+        velocidadX = 0;
+        velocidadY = 0;
+        enElSuelo = false;
+        saltosDisponibles = 2;
+        tocandoPared = false;
+        direccionPared = 0;
+        intentandoMoverse = false;
+
+        // Resetear animación a idle
+        tiempoAnimacionCorrer = 0f;
+        usandoCorrer1 = true;
+        sprite = ATLAS.createSprite("idle");
     }
 
     public void dispose() {
