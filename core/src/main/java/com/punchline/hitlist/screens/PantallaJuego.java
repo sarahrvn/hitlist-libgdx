@@ -1,31 +1,38 @@
 package com.punchline.hitlist.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.punchline.hitlist.elementosJuego.Mapa;
-import com.punchline.hitlist.elementosJuego.MapaDisponible;
-import com.punchline.hitlist.personajes.Personaje;
-import com.punchline.hitlist.personajes.TipoPersonaje;
-import com.punchline.hitlist.elementosJuego.Hud;
+
+import com.punchline.hitlist.elementosJuego.*;
 import com.punchline.hitlist.interacciones.TeclaListener;
 import com.punchline.hitlist.interacciones.HiloTiempo;
+import com.punchline.hitlist.personajes.Personaje;
+import com.punchline.hitlist.personajes.TipoPersonaje;
+
+import java.util.Iterator;
+import java.util.Random;
 
 public class PantallaJuego {
-
     private Mapa mapa;
     private final Personaje PERSONAJE_1;
     private final Hud HUD;
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
-    private boolean enPausa = false;
 
-    // Variables de Tiempo con Hilo
+    // Estados
+    private boolean enPausa = false;
+    private boolean volverAlMenu = false;
+
+    // Variables de tiempo con hilo
     private int segundosRestantes = 60;
     private boolean tiempoCumplido = false;
     private HiloTiempo hiloTiempo;
@@ -36,10 +43,13 @@ public class PantallaJuego {
     // Posición de spawn
     private final Vector2 POSICION_SPAWN;
 
-    // NUEVO - Variable para controlar si debe volver al menú
-    private boolean volverAlMenu = false;
+    private Array<Espada> espadasEnJuego;
+    private Random random;
 
-    // Constructor modificado para recibir el mapa y personaje seleccionados
+    private int contadorSegundosArma = 0;
+    private boolean debeSpawnearEspada = false;
+    private ObjectMap<Arma, Texture> texturasEspadas;
+
     public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje personajeSeleccionado) {
         mapa = new Mapa(mapaSeleccionado);
         PERSONAJE_1 = new Personaje(personajeSeleccionado);
@@ -48,39 +58,157 @@ public class PantallaJuego {
         camaraJuego = new OrthographicCamera();
         viewportJuego = new StretchViewport(1024, 576, camaraJuego);
         viewportJuego.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
 
-        // MEJORADO: Posición de spawn más consistente
-        // Spawn en el centro horizontal, y en la parte superior (80% de la altura)
         float spawnX = mapa.getAncho() / 2f;
-        float spawnY = mapa.getAlto() * 0.8f; // 80% de la altura del mapa
-
+        float spawnY = mapa.getAlto() * 0.8f;
         POSICION_SPAWN = new Vector2(spawnX, spawnY);
-
-        // Esperar un frame antes de posicionar el personaje
         PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
-        PERSONAJE_1.resetearVelocidad(); // Asegurar que empiece limpio
 
         batch = new SpriteBatch();
         teclaListener = new TeclaListener();
+        espadasEnJuego = new Array<>();
+        random = new Random();
 
-        // INICIAMOS EL HILO DE TIEMPO
+        texturasEspadas = new ObjectMap<>();
+        for (Arma tipo : Arma.values()) {
+            try {
+                Texture tex = new Texture(tipo.getNombreTextura());
+                texturasEspadas.put(tipo, tex);
+            } catch (Exception e) {
+                texturasEspadas.put(tipo, new Texture("elementos/espada.png"));
+            }
+        }
+
+        cargarSonidos();
+        reproducirMusicaMapa();
+
         hiloTiempo = new HiloTiempo(this);
         hiloTiempo.start();
     }
 
-    // Método llamado por el HiloTiempo cada segundo
+    private void cargarSonidos() {
+        GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.SALTO);
+        GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.CAIDA);
+    }
+
+    private void reproducirMusicaMapa() {
+        GestorSonidos.getInstancia().cargarMusica(SonidoDisponible.MUSICA_COMBATE);
+        GestorSonidos.getInstancia().reproducirMusica(SonidoDisponible.MUSICA_COMBATE, true);
+    }
+
     public void procesarSegundo() {
         if (!enPausa && !tiempoCumplido) {
             segundosRestantes--;
-
+            contadorSegundosArma++;
+            if (contadorSegundosArma >= 8) {
+                debeSpawnearEspada = true;
+                contadorSegundosArma = 0;
+            }
             if (segundosRestantes <= 0) {
                 segundosRestantes = 0;
                 tiempoCumplido = true;
+                volverAlMenu = true;
                 hiloTiempo.terminar();
             }
+        }
+    }
+
+    private void spawnearEspadaReal() {
+        float w = mapa.getAncho();
+        float[] posX = { w * 0.2f, w * 0.5f, w * 0.8f };
+        float x = posX[random.nextInt(3)];
+        float y = POSICION_SPAWN.y;
+
+        Arma[] tipos = Arma.values();
+        Arma tipo = tipos[random.nextInt(tipos.length)];
+
+        Texture tex = texturasEspadas.get(tipo);
+        Espada nueva = new Espada(x, y, tipo, tex);
+        espadasEnJuego.add(nueva);
+    }
+
+    public void update(float delta) {
+        if (debeSpawnearEspada) {
+            spawnearEspadaReal();
+            debeSpawnearEspada = false;
+        }
+
+        Gdx.input.setInputProcessor(teclaListener);
+        if (teclaListener.isEscapeJustPressed()) {
+            enPausa = !enPausa;
+            if(enPausa) GestorSonidos.getInstancia().pausarMusica();
+            else GestorSonidos.getInstancia().reanudarMusica();
+        }
+        HUD.mostrarPausa(enPausa);
+
+        if (!enPausa) {
+            if (teclaListener.isP1ArribaJustPressed()) PERSONAJE_1.saltar();
+            if (teclaListener.isP1Izquierda()) PERSONAJE_1.caminarIzquierda();
+            if (teclaListener.isP1Derecha()) PERSONAJE_1.caminarDerecha();
+
+            if (teclaListener.isP1AgarrarJustPressed()) {
+                verificarAgarre();
+            }
+
+            PERSONAJE_1.update(delta, mapa.getColisiones());
+            verificarColisionVacio();
+
+            Iterator<Espada> iter = espadasEnJuego.iterator();
+            while(iter.hasNext()) {
+                Espada e = iter.next();
+                e.update(delta, mapa.getColisiones());
+                if (!e.isActiva()) {
+                    e.dispose();
+                    iter.remove();
+                }
+            }
+        }
+        HUD.setTiempoRestante(segundosRestantes);
+    }
+
+    // --- MODIFICADO: YA NO IMPORTA QUÉ ARMA SEA ---
+    private void verificarAgarre() {
+        Rectangle hitboxPJ = PERSONAJE_1.getHitbox();
+        boolean tocoAlguna = false;
+
+        for(Espada espada : espadasEnJuego) {
+            if(hitboxPJ.overlaps(espada.getArea())) {
+                tocoAlguna = true;
+
+                // YA NO VERIFICAMOS TIPO. LA AGARRAMOS DIRECTAMENTE.
+                System.out.println("DEBUG: Agarrando arma: " + espada.getTipo());
+
+                PERSONAJE_1.equiparArma(espada.getTipo());
+                espada.destruir();
+
+                break; // Solo una a la vez
+            }
+        }
+
+        if (!tocoAlguna) {
+            System.out.println("DEBUG: Botón presionado, pero no tocas ninguna espada.");
+        }
+    }
+
+    private void verificarColisionVacio() {
+        for (Rectangle vacio : mapa.getColisionesVacio()) {
+            if (PERSONAJE_1.getHitbox().overlaps(vacio)) {
+                respawnearPersonaje();
+                break;
+            }
+        }
+    }
+
+    private void respawnearPersonaje() {
+        if (HUD.quitarVida()) {
+            PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
+            // Esto llamará al método modificado en Personaje que quita el arma
+            PERSONAJE_1.resetearVelocidad();
+        } else {
+            volverAlMenu = true;
+            if (hiloTiempo != null) hiloTiempo.terminar();
         }
     }
 
@@ -99,113 +227,14 @@ public class PantallaJuego {
 
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
+        for(Espada e : espadasEnJuego) e.render(batch);
         PERSONAJE_1.dibujar(batch);
         batch.end();
-
-        // DEBUG: Dibujar hitboxes (comentar después de debuggear)
-        debugDibujarColisiones();
 
         HUD.render(batch);
     }
 
-    // MÉTODO DE DEBUG - Visualizar todas las colisiones
-    private void debugDibujarColisiones() {
-        com.badlogic.gdx.graphics.glutils.ShapeRenderer shapeRenderer = new com.badlogic.gdx.graphics.glutils.ShapeRenderer();
-        shapeRenderer.setProjectionMatrix(camaraJuego.combined);
-        shapeRenderer.begin(com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line);
-
-        // Dibujar colisiones normales en VERDE
-        shapeRenderer.setColor(0, 1, 0, 1);
-        for (Rectangle col : mapa.getColisiones()) {
-            shapeRenderer.rect(col.x, col.y, col.width, col.height);
-        }
-
-        // Dibujar colisiones de vacío en ROJO
-        shapeRenderer.setColor(1, 0, 0, 1);
-        for (Rectangle vacio : mapa.getColisionesVacio()) {
-            shapeRenderer.rect(vacio.x, vacio.y, vacio.width, vacio.height);
-        }
-
-        // Dibujar hitbox del personaje en AMARILLO
-        shapeRenderer.setColor(1, 1, 0, 1);
-        Rectangle hitbox = PERSONAJE_1.getHitbox();
-        shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-
-        shapeRenderer.end();
-        shapeRenderer.dispose();
-    }
-
-    public void update(float delta) {
-        Gdx.input.setInputProcessor(this.teclaListener);
-
-        if (teclaListener.isEscapeJustPressed()) {
-            enPausa = !enPausa;
-        }
-
-        HUD.mostrarPausa(enPausa);
-
-        if (!enPausa) {
-            // INPUTS P1
-            if (teclaListener.isP1ArribaJustPressed()) {
-                PERSONAJE_1.saltar();
-            }
-            if (teclaListener.isP1Izquierda()) {
-                PERSONAJE_1.caminarIzquierda();
-            }
-            if (teclaListener.isP1Derecha()) {
-                PERSONAJE_1.caminarDerecha();
-            }
-
-            // FÍSICAS - SOLO con las colisiones normales, NO con el vacío
-            PERSONAJE_1.update(delta, mapa.getColisiones());
-
-            // Verificar colisión con vacío DESPUÉS de las físicas
-            verificarColisionVacio();
-        }
-
-        // Actualizamos el HUD con la variable que modifica el Hilo
-        HUD.setTiempoRestante(segundosRestantes);
-    }
-
-    // Método para verificar si el personaje toca el vacío
-    private void verificarColisionVacio() {
-        Rectangle hitboxPersonaje = PERSONAJE_1.getHitbox();
-
-        for (Rectangle vacio : mapa.getColisionesVacio()) {
-            if (hitboxPersonaje.overlaps(vacio)) {
-                respawnearPersonaje();
-                break;
-            }
-        }
-    }
-
-    // Método para respawnear el personaje
-    private void respawnearPersonaje() {
-        // Quitar una vida
-        boolean sigueTeniendoVidas = HUD.quitarVida();
-
-        if (sigueTeniendoVidas) {
-            // Si todavía tiene vidas, respawnear
-            PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
-            PERSONAJE_1.resetearVelocidad();
-        } else {
-            // Si ya no tiene vidas, marcar para volver al menú
-            volverAlMenu = true;
-            // Detener el hilo de tiempo
-            if (hiloTiempo != null) {
-                hiloTiempo.terminar();
-            }
-        }
-    }
-
-    public boolean terminoElTiempo() {
-        return tiempoCumplido;
-    }
-
-    // NUEVO - Método para verificar si debe volver al menú
-    public boolean debeVolverAlMenu() {
-        return volverAlMenu;
-    }
+    public boolean debeVolverAlMenu() { return volverAlMenu; }
 
     public void ajustarCamara(int width, int height) {
         viewportJuego.update(width, height, true);
@@ -217,10 +246,9 @@ public class PantallaJuego {
         mapa.dispose();
         HUD.dispose();
         batch.dispose();
-
-        // Detener el hilo al cerrar
-        if (hiloTiempo != null) {
-            hiloTiempo.terminar();
-        }
+        PERSONAJE_1.dispose();
+        for(Texture t : texturasEspadas.values()) t.dispose();
+        if (hiloTiempo != null) hiloTiempo.terminar();
+        GestorSonidos.getInstancia().detenerMusica();
     }
 }

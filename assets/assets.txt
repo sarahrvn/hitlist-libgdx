@@ -40,10 +40,10 @@ mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
+sonidos/salto.wav
 sprites/Billie preview.png
 sprites/Billie_Eilish.png
 sprites/Billie_Eilish.txt
-sprites/Billie_Eilish_Arma.png
 sprites/Billie_Eilish_Arma.txt
 sprites/Frida preview.png
 sprites/Frida_Kahlo.png

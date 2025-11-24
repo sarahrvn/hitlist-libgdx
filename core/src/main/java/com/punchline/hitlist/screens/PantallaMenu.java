@@ -1,7 +1,6 @@
 package com.punchline.hitlist.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -54,7 +53,6 @@ public class PantallaMenu {
             font = generator.generateFont(parameter);
             generator.dispose(); // Limpia el generador
         } catch (Exception e) {
-            System.out.println("No se encontró fuente .ttf");
             font = new BitmapFont();
             font.getData().setScale(3f);
         }

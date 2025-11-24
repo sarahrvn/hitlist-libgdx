@@ -6,11 +6,11 @@ import com.badlogic.gdx.Input.Keys;
 public class TeclaListener implements InputProcessor {
     // Jugador 1 (WASD)
     private boolean w = false, a = false, s = false, d = false;
-    private boolean wJustPressed = false, sJustPressed = false;
+    private boolean wJustPressed = false, sJustPressed = false, eJustPressed = false;;
 
     // Jugador 2 (Flechitas)
     private boolean up = false, down = false, left = false, right = false;
-    private boolean upJustPressed = false, downJustPressed = false;
+    private boolean upJustPressed = false, downJustPressed = false, iJustPressed = false;
 
     // Generales
     private boolean escape = false, escapeJustPressed = false;
@@ -23,12 +23,14 @@ public class TeclaListener implements InputProcessor {
         if(keycode == Keys.S) { s = true; sJustPressed = true; }
         if(keycode == Keys.A) { a = true; }
         if(keycode == Keys.D) { d = true; }
+        if(keycode == Keys.E) { eJustPressed = true; }
 
         // P2
         if(keycode == Keys.UP) { up = true; upJustPressed = true; }
         if(keycode == Keys.DOWN) { down = true; downJustPressed = true; }
         if(keycode == Keys.LEFT) { left = true; }
         if(keycode == Keys.RIGHT) { right = true; }
+        if(keycode == Keys.I) { iJustPressed = true; }
 
         // General
         if(keycode == Keys.ESCAPE) { escape = true; escapeJustPressed = true; }
@@ -39,20 +41,14 @@ public class TeclaListener implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        // P1
         if(keycode == Keys.W) w = false;
         if(keycode == Keys.S) s = false;
         if(keycode == Keys.A) a = false;
         if(keycode == Keys.D) d = false;
-
-        // P2
         if(keycode == Keys.UP) up = false;
         if(keycode == Keys.DOWN) down = false;
         if(keycode == Keys.LEFT) left = false;
         if(keycode == Keys.RIGHT) right = false;
-
-        if(keycode == Keys.ESCAPE) escape = false;
-
         return true;
     }
 
@@ -67,6 +63,13 @@ public class TeclaListener implements InputProcessor {
     public boolean isP1Abajo() { return s; }
     public boolean isP1Izquierda() { return a; }
     public boolean isP1Derecha() { return d; }
+    public boolean isP1AgarrarJustPressed() {
+        if (eJustPressed) {
+            eJustPressed = false;
+            return true;
+        }
+        return false;
+    }
 
     // ---- Getters para Jugador 2 ----
     public boolean isP2ArribaJustPressed() {
@@ -79,9 +82,15 @@ public class TeclaListener implements InputProcessor {
     public boolean isP2Abajo() { return down; }
     public boolean isP2Izquierda() { return left; }
     public boolean isP2Derecha() { return right; }
+    public boolean isP2AgarrarJustPressed() {
+        if (iJustPressed) {
+            iJustPressed = false;
+            return true;
+        }
+        return false;
+    }
 
     // ---- JUST PRESSED GENERALES ----
-
     public boolean isEscapeJustPressed() {
         if (this.escapeJustPressed) {
             this.escapeJustPressed = false;

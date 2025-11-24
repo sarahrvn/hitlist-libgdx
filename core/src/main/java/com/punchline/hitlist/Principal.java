@@ -119,7 +119,7 @@ public class Principal extends ApplicationAdapter {
                     pantallaJuego = new PantallaJuego(mapaElegido, personajeElegido);
                     pantallaJuego.ajustarCamara(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     estadoActual = EstadoScreen.JUEGO;
-                    estadoActual = EstadoScreen.JUEGO;
+
 
 
                 }

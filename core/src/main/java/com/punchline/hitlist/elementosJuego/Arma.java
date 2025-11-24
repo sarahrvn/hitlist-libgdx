@@ -1,52 +1,28 @@
 package com.punchline.hitlist.elementosJuego;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+public enum Arma {
+    // Definimos (Fuerza, Velocidad, Defensa)
+    PINCEL(3, 2, 0),
+    MICROFONO(1, 0, 3),
+    GUANTE(4, -3, 0),
+    PELOTA(0, 3, 1);
 
-public class Arma {
-    private Sprite sprite;
-    private Rectangle boundingBox;
-    private float velocidadY = 0;
-    private final float GRAVEDAD = -1000;
-    private boolean activa = true; // Si es false desaparece (porque la agarraron)
+    private int modFuerza, modVelocidad, modDefensa;
 
-    public Arma(float x, float y) {
-        Texture texturaEspada = new Texture("items/espada.png");
-        this.sprite = new Sprite(texturaEspada);
-        this.sprite.setPosition(x, y);
-        this.boundingBox = new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
+    Arma(int f, int v, int d) {
+        this.modFuerza = f;
+        this.modVelocidad = v;
+        this.modDefensa = d;
     }
 
-    public void update(float delta, Array<Rectangle> colisiones) {
-        if (!activa) return;
-
-        // Física
-        velocidadY += GRAVEDAD * delta;
-        boundingBox.y += velocidadY * delta;
-
-        // Colisión con el piso
-        for (Rectangle colision : colisiones) {
-            if (boundingBox.overlaps(colision)) {
-                // Si toca suelo, se queda quieta arriba del bloque
-                boundingBox.y = colision.y + colision.height;
-                velocidadY = 0;
-                break;
-            }
-        }
-
-        sprite.setPosition(boundingBox.x, boundingBox.y);
+    // Si quieres que cada arma tenga su propia imagen:
+    public String getNombreTextura() {
+        return "elementos/espada.png";
     }
 
-    public void render(SpriteBatch batch) {
-        if (activa) { sprite.draw(batch); }
-    }
+    // O si usas "espada.png" para todos, cambia esto para devolver siempre lo mismo.
 
-    public Rectangle getArea() { return boundingBox; }
-    public boolean isActiva() { return activa; }
-    public void destruir() { this.activa = false; }
-
-    public void dispose() { sprite.getTexture().dispose(); }
+    public int getModFuerza() { return modFuerza; }
+    public int getModVelocidad() { return modVelocidad; }
+    public int getModDefensa() { return modDefensa; }
 }
