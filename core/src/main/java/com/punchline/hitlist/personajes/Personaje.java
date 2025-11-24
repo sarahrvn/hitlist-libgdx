@@ -1,5 +1,7 @@
 package com.punchline.hitlist.personajes;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -11,7 +13,7 @@ public class Personaje {
     private final Rectangle boundingBox;
     private final TextureAtlas ATLAS;
 
-    // Estadísticas
+    // --- ESTADÍSTICAS ---
     private Estadistica fuerza;
     private Estadistica destreza;
     private Estadistica defensa;
@@ -21,7 +23,7 @@ public class Personaje {
     private float velocidadY = 0;
     private float velocidadX = 0;
 
-    // Variables calculadas en base a stats
+    // Variables dinámicas (calculadas en base a stats)
     private float velocidadCaminarActual;
 
     // Constantes fijas
@@ -40,8 +42,15 @@ public class Personaje {
 
     // Animación de correr
     private float tiempoAnimacionCorrer = 0f;
-    private final float TIEMPO_CAMBIO_SPRITE = 0.2f;
+    private final float TIEMPO_CAMBIO_SPRITE = 0.5f; // Medio segundo
     private boolean usandoCorrer1 = true;
+
+    // SONIDOS
+    private Sound sonidoSalto;
+    private Sound sonidoPaso;
+    private Sound sonidoCaida;
+    private float tiempoUltimoPaso = 0f;
+    private final float INTERVALO_PASOS = 0.3f; // Un paso cada 0.3 segundos
 
     public Personaje(TipoPersonaje tipo) {
         this.ATLAS = new TextureAtlas(tipo.getRutaSprite());
@@ -58,6 +67,19 @@ public class Personaje {
 
         // Hitbox
         boundingBox = new Rectangle(0, 0, sprite.getWidth(), sprite.getHeight());
+
+        // CARGAR SONIDOS
+        cargarSonidos();
+    }
+
+    private void cargarSonidos() {
+        try {
+            sonidoSalto = Gdx.audio.newSound(Gdx.files.internal("sonidos/salto.wav"));
+            sonidoPaso = Gdx.audio.newSound(Gdx.files.internal("sonidos/paso.wav"));
+            sonidoCaida = Gdx.audio.newSound(Gdx.files.internal("sonidos/caida.wav"));
+        } catch (Exception e) {
+            System.err.println("Error cargando sonidos: " + e.getMessage());
+        }
     }
 
     private void recalcularAtributos() {
@@ -67,10 +89,19 @@ public class Personaje {
     }
 
     public void update(float delta, Array<Rectangle> colisiones) {
+        // CLAMPING: Evitar deltas muy grandes que causen bugs
+        delta = Math.min(delta, 1/30f); // Máximo 0.033s por frame
 
         // Actualizar timer de animación si se está moviendo
         if (intentandoMoverse) {
             tiempoAnimacionCorrer += delta;
+            tiempoUltimoPaso += delta;
+
+            // Reproducir sonido de pasos
+            if (enElSuelo && tiempoUltimoPaso >= INTERVALO_PASOS) {
+                reproducirSonido(sonidoPaso, 0.3f);
+                tiempoUltimoPaso = 0f;
+            }
 
             // Cambiar sprite cada medio segundo
             if (tiempoAnimacionCorrer >= TIEMPO_CAMBIO_SPRITE) {
@@ -91,6 +122,9 @@ public class Personaje {
             }
         }
 
+        // Guardar estado anterior para detectar aterrizajes
+        boolean estabaEnElAire = !enElSuelo;
+
         // 1. Mover en X y detectar paredes
         boundingBox.x += velocidadX * delta;
         checkColisionX(colisiones);
@@ -108,6 +142,11 @@ public class Personaje {
         // 3. Mover en Y
         boundingBox.y += velocidadY * delta;
         checkColisionY(colisiones);
+
+        // Detectar aterrizaje y reproducir sonido de caída
+        if (estabaEnElAire && enElSuelo && velocidadY <= 0) {
+            reproducirSonido(sonidoCaida, 0.4f);
+        }
 
         // 4. Actualizar sprite
         sprite.setPosition(boundingBox.x, boundingBox.y);
@@ -127,6 +166,9 @@ public class Personaje {
             velocidadY = VELOCIDAD_SALTO;
             saltosDisponibles--;
             enElSuelo = false;
+
+            // Reproducir sonido de salto
+            reproducirSonido(sonidoSalto, 0.5f);
         }
     }
 
@@ -204,8 +246,12 @@ public class Personaje {
     }
 
     public void setPosition(float x, float y) {
-        boundingBox.setPosition(x, y);
-        sprite.setPosition(x, y);
+        // Actualizar boundingBox - centrado en la posición dada
+        boundingBox.setPosition(x - boundingBox.width / 2f, y - boundingBox.height / 2f);
+
+        // Actualizar sprite para que coincida exactamente con el boundingBox
+        sprite.setPosition(boundingBox.x, boundingBox.y);
+        sprite.setBounds(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
     }
 
     public Rectangle getBoundingRectangle() {
@@ -242,5 +288,23 @@ public class Personaje {
 
     public void dispose() {
         ATLAS.dispose();
+
+        // Liberar sonidos
+        if (sonidoSalto != null) sonidoSalto.dispose();
+        if (sonidoPaso != null) sonidoPaso.dispose();
+        if (sonidoCaida != null) sonidoCaida.dispose();
+    }
+
+    // ---- MÉTODOS AUXILIARES PARA SONIDOS ----
+
+    /**
+     * Reproduce un sonido de forma segura (verifica que no sea null)
+     * @param sonido El sonido a reproducir
+     * @param volumen Volumen de 0.0 a 1.0
+     */
+    private void reproducirSonido(Sound sonido, float volumen) {
+        if (sonido != null) {
+            sonido.play(volumen);
+        }
     }
 }

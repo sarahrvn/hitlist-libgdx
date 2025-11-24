@@ -52,8 +52,16 @@ public class PantallaJuego {
         camaraJuego.position.set(mapa.getAncho() / 2f, mapa.getAlto() / 2f, 0);
         camaraJuego.update();
 
-        POSICION_SPAWN = new Vector2(mapa.getAncho() / 2f, mapa.getAlto() / 1.2f);
+        // MEJORADO: Posición de spawn más consistente
+        // Spawn en el centro horizontal, y en la parte superior (80% de la altura)
+        float spawnX = mapa.getAncho() / 2f;
+        float spawnY = mapa.getAlto() * 0.8f; // 80% de la altura del mapa
+
+        POSICION_SPAWN = new Vector2(spawnX, spawnY);
+
+        // Esperar un frame antes de posicionar el personaje
         PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
+        PERSONAJE_1.resetearVelocidad(); // Asegurar que empiece limpio
 
         batch = new SpriteBatch();
         teclaListener = new TeclaListener();
@@ -71,7 +79,6 @@ public class PantallaJuego {
             if (segundosRestantes <= 0) {
                 segundosRestantes = 0;
                 tiempoCumplido = true;
-                volverAlMenu = true;
                 hiloTiempo.terminar();
             }
         }
@@ -95,7 +102,37 @@ public class PantallaJuego {
         PERSONAJE_1.dibujar(batch);
         batch.end();
 
+        // DEBUG: Dibujar hitboxes (comentar después de debuggear)
+        debugDibujarColisiones();
+
         HUD.render(batch);
+    }
+
+    // MÉTODO DE DEBUG - Visualizar todas las colisiones
+    private void debugDibujarColisiones() {
+        com.badlogic.gdx.graphics.glutils.ShapeRenderer shapeRenderer = new com.badlogic.gdx.graphics.glutils.ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(camaraJuego.combined);
+        shapeRenderer.begin(com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line);
+
+        // Dibujar colisiones normales en VERDE
+        shapeRenderer.setColor(0, 1, 0, 1);
+        for (Rectangle col : mapa.getColisiones()) {
+            shapeRenderer.rect(col.x, col.y, col.width, col.height);
+        }
+
+        // Dibujar colisiones de vacío en ROJO
+        shapeRenderer.setColor(1, 0, 0, 1);
+        for (Rectangle vacio : mapa.getColisionesVacio()) {
+            shapeRenderer.rect(vacio.x, vacio.y, vacio.width, vacio.height);
+        }
+
+        // Dibujar hitbox del personaje en AMARILLO
+        shapeRenderer.setColor(1, 1, 0, 1);
+        Rectangle hitbox = PERSONAJE_1.getHitbox();
+        shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+
+        shapeRenderer.end();
+        shapeRenderer.dispose();
     }
 
     public void update(float delta) {
@@ -119,10 +156,10 @@ public class PantallaJuego {
                 PERSONAJE_1.caminarDerecha();
             }
 
-            // FÍSICAS
+            // FÍSICAS - SOLO con las colisiones normales, NO con el vacío
             PERSONAJE_1.update(delta, mapa.getColisiones());
 
-            // Verificar colisión con vacío
+            // Verificar colisión con vacío DESPUÉS de las físicas
             verificarColisionVacio();
         }
 
