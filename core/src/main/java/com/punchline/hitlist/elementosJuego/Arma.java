@@ -15,13 +15,6 @@ public enum Arma {
         this.modDefensa = d;
     }
 
-    // Si quieres que cada arma tenga su propia imagen:
-    public String getNombreTextura() {
-        return "elementos/espada.png";
-    }
-
-    // O si usas "espada.png" para todos, cambia esto para devolver siempre lo mismo.
-
     public int getModFuerza() { return modFuerza; }
     public int getModVelocidad() { return modVelocidad; }
     public int getModDefensa() { return modDefensa; }
