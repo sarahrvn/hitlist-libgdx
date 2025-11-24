@@ -1,7 +1,12 @@
 botones/Gemini_Generated_Image_kh8vgfkh8vgfkh8v.png
 elementos/espada.png
+fondos/Billie_Menu.png
 fondos/Fondo_Menu.png
 fondos/Fondo_Menu2.png
+fondos/Fondo_Seleccion_Personaje.png
+fondos/Frida_Menu.png
+fondos/Lebron_Menu.png
+fondos/Michael_Menu.png
 fondos/fondo.png
 fondos/mapaCiudad.png
 fuentes/ari-w9500-bold.ttf

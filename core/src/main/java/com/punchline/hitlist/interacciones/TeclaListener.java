@@ -10,7 +10,7 @@ public class TeclaListener implements InputProcessor {
 
     // Jugador 2 (Flechitas)
     private boolean up = false, down = false, left = false, right = false;
-    private boolean upJustPressed = false, downJustPressed = false, iJustPressed = false;
+    private boolean upJustPressed = false, downJustPressed = false, iJustPressed = false, leftJustPressed = false, rightJustPressed = false;
 
     // Generales
     private boolean escape = false, escapeJustPressed = false;
@@ -28,8 +28,8 @@ public class TeclaListener implements InputProcessor {
         // P2
         if(keycode == Keys.UP) { up = true; upJustPressed = true; }
         if(keycode == Keys.DOWN) { down = true; downJustPressed = true; }
-        if(keycode == Keys.LEFT) { left = true; }
-        if(keycode == Keys.RIGHT) { right = true; }
+        if(keycode == Keys.LEFT) { left = true; leftJustPressed = true;}
+        if(keycode == Keys.RIGHT) { right = true; rightJustPressed = true;}
         if(keycode == Keys.I) { iJustPressed = true; }
 
         // General
@@ -124,6 +124,25 @@ public class TeclaListener implements InputProcessor {
         }
         return false;
     }
+
+    public boolean isDerechaJustPressed() {
+        if (this.rightJustPressed || this.rightJustPressed) {
+            this.rightJustPressed = false;
+            this.rightJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isIzquierdaJustPressed() {
+        if (this.leftJustPressed || this.leftJustPressed) {
+            this.leftJustPressed = false;
+            this.leftJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
 
     // Métodos obligatorios vacíos
     @Override public boolean keyTyped(char character) { return false; }
