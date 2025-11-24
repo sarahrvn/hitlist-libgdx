@@ -15,15 +15,20 @@ public class Personaje {
     private final TextureAtlas ATLAS;
     private final TipoPersonaje TIPO_PERSONAJE;
 
+    // Estadísticas
     private Estadistica fuerza;
     private Estadistica destreza;
     private Estadistica defensa;
     private Estadistica velocidad;
 
+    // Arma
     private Arma armaEquipada = null;
 
+    // Movimiento
     private float velocidadY = 0;
     private float velocidadX = 0;
+
+    //
     private float velocidadCaminarActual;
     private final float GRAVEDAD = -1500;
     private final float VELOCIDAD_SALTO = 540;
@@ -37,6 +42,20 @@ public class Personaje {
     private boolean usandoCorrer1 = true;
     private float tiempoUltimoPaso = 0f;
     private final float INTERVALO_PASOS = 0.1f;
+
+    // ---- COMBATE ----
+    private boolean atacando = false;
+    private float tiempoAtaque = 0; // Cuánto tiempo lleva activo el hitbox
+    private float tiempoCooldown = 0; // Tiempo de espera para volver a pegar
+
+    private final float DURACION_GOLPE = 0.2f; // El golpe dura 0.2 segundos
+    private final float COOLDOWN_GOLPE = 0.5f; // Espera medio segundo entre golpes
+
+    // Hitbox del golpe (caja roja)
+    private Rectangle hitboxAtaque;
+
+    // Variable para debuguear (para ver la caja roja)
+    private boolean mostrarHitbox = false;
 
     public Personaje(TipoPersonaje tipo) {
         this.TIPO_PERSONAJE = tipo;
@@ -53,20 +72,20 @@ public class Personaje {
     }
 
     public Arma getArmaAsignada() {
-        return TIPO_PERSONAJE.getArmaAsignada();
+        return this.TIPO_PERSONAJE.getArmaAsignada();
     }
 
     private void recalcularAtributos() {
-        int fBase = TIPO_PERSONAJE.getFuerza();
-        int dBase = TIPO_PERSONAJE.getDefensa();
-        int vBase = TIPO_PERSONAJE.getVelocidad();
+        int fBase = this.TIPO_PERSONAJE.getFuerza();
+        int dBase = this.TIPO_PERSONAJE.getDefensa();
+        int vBase = this.TIPO_PERSONAJE.getVelocidad();
 
         int modF = 0, modD = 0, modV = 0;
 
         if (armaEquipada != null) {
-            modF = limitarModificador(armaEquipada.getModFuerza());
-            modD = limitarModificador(armaEquipada.getModDefensa());
-            modV = limitarModificador(armaEquipada.getModVelocidad());
+            modF = this.armaEquipada.getModFuerza();
+            modD = this.armaEquipada.getModDefensa();
+            modV = this.armaEquipada.getModVelocidad();
         }
 
         this.fuerza.setEstadistica(fBase + modF);

@@ -1,7 +1,7 @@
 package com.punchline.hitlist.elementosJuego;
 
 public enum Arma {
-    // Definimos (Fuerza, Velocidad, Defensa)
+    // Atributos que le va a modificar al pj (Fuerza, Velocidad, Defensa)
     PINCEL(3, 2, 0),
     MICROFONO(1, 0, 3),
     GUANTE(4, -3, 0),
@@ -19,8 +19,6 @@ public enum Arma {
     public String getNombreTextura() {
         return "elementos/espada.png";
     }
-
-    // O si usas "espada.png" para todos, cambia esto para devolver siempre lo mismo.
 
     public int getModFuerza() { return modFuerza; }
     public int getModVelocidad() { return modVelocidad; }

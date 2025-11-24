@@ -48,7 +48,7 @@ public class Espada {
     public void destruir() { this.activa = false; }
 
     public void dispose() {
-        // IMPORTANTE: NO HACER DISPOSE AQUÍ.
+        // NO HACER DISPOSE ACÁ.
         // La textura se comparte entre todas las espadas y la maneja PantallaJuego.
     }
 }
