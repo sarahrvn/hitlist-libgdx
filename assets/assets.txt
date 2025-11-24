@@ -14,6 +14,10 @@ fuentes/ari_w9500.zip
 hud/corazon_amarillo.png
 hud/corazon_amarilloo.png
 logos/Hitlist_Titulo.png
+logos/Hitlist_Titulo_128.png
+logos/Hitlist_Titulo_16.png
+logos/Hitlist_Titulo_32.png
+logos/Hitlist_Titulo_64.png
 logos/Punchline_Logo.png
 logos/Titulo_Mas_Chico.png
 mapas/bloque.tsx

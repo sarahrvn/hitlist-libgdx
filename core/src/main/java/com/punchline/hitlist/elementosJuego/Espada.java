@@ -12,9 +12,8 @@ public class Espada {
     private float velocidadY = 0;
     private final float GRAVEDAD = -1000;
     private boolean activa = true;
-    private Arma tipo; // Antes TipoArma
+    private Arma tipo;
 
-    // AHORA RECIBE LA TEXTURA, NO LA CREA
     public Espada(float x, float y, Arma tipo, Texture texturaCompartida) {
         this.tipo = tipo;
 

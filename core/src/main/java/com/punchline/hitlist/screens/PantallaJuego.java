@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -48,7 +47,8 @@ public class PantallaJuego {
 
     private int contadorSegundosArma = 0;
     private boolean debeSpawnearEspada = false;
-    private ObjectMap<Arma, Texture> texturasEspadas;
+
+    private static final Texture TEXTURA_ESPADA = new Texture("elementos/espada.png");
 
     public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje personajeSeleccionado) {
         mapa = new Mapa(mapaSeleccionado);
@@ -70,16 +70,6 @@ public class PantallaJuego {
         teclaListener = new TeclaListener();
         espadasEnJuego = new Array<>();
         random = new Random();
-
-        texturasEspadas = new ObjectMap<>();
-        for (Arma tipo : Arma.values()) {
-            try {
-                Texture tex = new Texture(tipo.getNombreTextura());
-                texturasEspadas.put(tipo, tex);
-            } catch (Exception e) {
-                texturasEspadas.put(tipo, new Texture("elementos/espada.png"));
-            }
-        }
 
         cargarSonidos();
         reproducirMusicaMapa();
@@ -115,17 +105,14 @@ public class PantallaJuego {
         }
     }
 
+    // ✅ Spawn genérico: todas las espadas se ven iguales
     private void spawnearEspadaReal() {
         float w = mapa.getAncho();
         float[] posX = { w * 0.2f, w * 0.5f, w * 0.8f };
         float x = posX[random.nextInt(3)];
         float y = POSICION_SPAWN.y;
 
-        Arma[] tipos = Arma.values();
-        Arma tipo = tipos[random.nextInt(tipos.length)];
-
-        Texture tex = texturasEspadas.get(tipo);
-        Espada nueva = new Espada(x, y, tipo, tex);
+        Espada nueva = new Espada(x, y, null, TEXTURA_ESPADA);
         espadasEnJuego.add(nueva);
     }
 
@@ -168,27 +155,20 @@ public class PantallaJuego {
         HUD.setTiempoRestante(segundosRestantes);
     }
 
-    // --- MODIFICADO: YA NO IMPORTA QUÉ ARMA SEA ---
+    // ✅ MODIFICADO: ya no importa qué espada sea
     private void verificarAgarre() {
         Rectangle hitboxPJ = PERSONAJE_1.getHitbox();
-        boolean tocoAlguna = false;
 
         for(Espada espada : espadasEnJuego) {
             if(hitboxPJ.overlaps(espada.getArea())) {
-                tocoAlguna = true;
 
-                // YA NO VERIFICAMOS TIPO. LA AGARRAMOS DIRECTAMENTE.
-                System.out.println("DEBUG: Agarrando arma: " + espada.getTipo());
+                // El personaje equipa SU arma propia
+                Arma armaPropia = PERSONAJE_1.getArmaAsignada();
+                PERSONAJE_1.equiparArma(armaPropia);
 
-                PERSONAJE_1.equiparArma(espada.getTipo());
                 espada.destruir();
-
-                break; // Solo una a la vez
+                break;
             }
-        }
-
-        if (!tocoAlguna) {
-            System.out.println("DEBUG: Botón presionado, pero no tocas ninguna espada.");
         }
     }
 
@@ -204,7 +184,6 @@ public class PantallaJuego {
     private void respawnearPersonaje() {
         if (HUD.quitarVida()) {
             PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
-            // Esto llamará al método modificado en Personaje que quita el arma
             PERSONAJE_1.resetearVelocidad();
         } else {
             volverAlMenu = true;
@@ -247,7 +226,7 @@ public class PantallaJuego {
         HUD.dispose();
         batch.dispose();
         PERSONAJE_1.dispose();
-        for(Texture t : texturasEspadas.values()) t.dispose();
+        TEXTURA_ESPADA.dispose();
         if (hiloTiempo != null) hiloTiempo.terminar();
         GestorSonidos.getInstancia().detenerMusica();
     }

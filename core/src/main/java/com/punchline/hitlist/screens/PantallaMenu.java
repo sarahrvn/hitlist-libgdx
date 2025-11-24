@@ -131,7 +131,7 @@ public class PantallaMenu {
         if (teclaListener.isEnterJustPressed()) {
             if (opcionSeleccionada == 0) {
                 quiereJugar = true;
-            } else if (opcionSeleccionada == 1) {
+            } else if (opcionSeleccionada == 2) {
                 quiereSalir = true;
             }
         }
