@@ -19,6 +19,7 @@ public class Principal extends ApplicationAdapter {
     private PantallaMenu pantallaMenu;
     private PantallaSeleccionPersonaje pantallaSeleccionPersonaje;
     private PantallaSeleccionMapa pantallaSeleccionMapa;
+    private PantallaResultado pantallaResultado;
     private EstadoScreen estadoActual;
 
     private TipoPersonaje seleccionP1, seleccionP2;
@@ -120,31 +121,61 @@ public class Principal extends ApplicationAdapter {
                     pantallaJuego = new PantallaJuego(mapaElegido, seleccionP1, seleccionP2);
                     pantallaJuego.ajustarCamara(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     estadoActual = EstadoScreen.JUEGO;
-
-
-
                 }
-
                 break;
 
             case JUEGO:
                 pantallaJuego.render(delta);
                 if (pantallaJuego.debeVolverAlMenu()) {
+                    int indiceGanador = pantallaJuego.getIndiceGanador();
+
+                    TipoPersonaje personajeGanador;
+                    int numeroJugadorGanador;
+
+                    if (indiceGanador == 0) {
+                        personajeGanador = seleccionP1;
+                        numeroJugadorGanador = 1;
+                    } else {
+                        personajeGanador = seleccionP2;
+                        numeroJugadorGanador = 2;
+                    }
+
+                    pantallaResultado = new PantallaResultado(personajeGanador, numeroJugadorGanador);
+                    estadoActual = EstadoScreen.RESULTADO;
+
+                    pantallaJuego.dispose();
+                    pantallaJuego = null;
+                }
+                break;
+
+            case RESULTADO:
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+                camara.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                camara.update();
+
+                pantallaResultado.render(batch, camara);
+
+                if (pantallaResultado.debeVolverMenu()) {
                     pantallaMenu = new PantallaMenu();
                     estadoActual = EstadoScreen.MENU;
-                    pantallaJuego = null;
+
+                    pantallaResultado.dispose();
+                    pantallaResultado = null;
+                } else if (pantallaResultado.debeSalir()) {
+                    pantallaResultado.dispose();
+                    Gdx.app.exit();
                 }
                 break;
         }
     }
 
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         if (pantallaJuego != null) {
             pantallaJuego.ajustarCamara(width, height);
         }
     }
-
 
     @Override
     public void dispose() {
@@ -154,6 +185,7 @@ public class Principal extends ApplicationAdapter {
         if (pantallaSeleccionPersonaje != null) pantallaSeleccionPersonaje.dispose();
         if (pantallaSeleccionMapa != null) pantallaSeleccionMapa.dispose();
         if (pantallaJuego != null) pantallaJuego.dispose();
+        if (pantallaResultado != null) pantallaResultado.dispose();
         batch.dispose();
     }
 }
