@@ -61,21 +61,25 @@ sprites/Billie preview.png
 sprites/Billie_Eilish.png
 sprites/Billie_Eilish.txt
 sprites/Billie_Eilish_Arma.txt
+sprites/Billie_Victoria.png
 sprites/Frida preview.png
 sprites/Frida_Kahlo.png
 sprites/Frida_Kahlo.txt
 sprites/Frida_Kahlo_Arma.png
 sprites/Frida_Kahlo_Arma.txt
+sprites/Frida_Victoria.png
 sprites/Lebron preview.png
 sprites/Lebron_James.png
 sprites/Lebron_James.txt
 sprites/Lebron_James_Arma.png
 sprites/Lebron_James_Arma.txt
+sprites/Lebron_Victoria.png
 sprites/Michael preview.png
 sprites/Michael_Jackson.png
 sprites/Michael_Jackson.txt
 sprites/Michael_Jackson_Arma.png
 sprites/Michael_Jackson_Arma.txt
+sprites/Michael_Victoria.png
 sprites/Sprite Sheet Billie.png
 sprites/Sprite Sheet Frida Kahlo Arma.png
 sprites/Sprite Sheet Frida Kahlo.png

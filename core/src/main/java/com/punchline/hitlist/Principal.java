@@ -19,6 +19,7 @@ public class Principal extends ApplicationAdapter {
     private PantallaMenu pantallaMenu;
     private PantallaSeleccionPersonaje pantallaSeleccionPersonaje;
     private PantallaSeleccionMapa pantallaSeleccionMapa;
+    private PantallaResultado pantallaResultado;
     private EstadoScreen estadoActual;
 
     private TipoPersonaje personajeElegido;
@@ -129,9 +130,30 @@ public class Principal extends ApplicationAdapter {
             case JUEGO:
                 pantallaJuego.render(delta);
                 if (pantallaJuego.debeVolverAlMenu()) {
+                    pantallaResultado = new PantallaResultado(personajeElegido, 1);
+                    estadoActual = EstadoScreen.RESULTADO;
+                    pantallaJuego = null;
+                }
+                break;
+
+            case RESULTADO:
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+                camara.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                camara.update();
+
+                pantallaResultado.render(batch, camara);
+
+                if (pantallaResultado.debeVolverMenu()) {
                     pantallaMenu = new PantallaMenu();
                     estadoActual = EstadoScreen.MENU;
-                    pantallaJuego = null;
+
+                    pantallaResultado.dispose();
+                    pantallaResultado = null;
+                } else if (pantallaResultado.debeSalir()) {
+                    pantallaResultado.dispose();
+                    Gdx.app.exit();
                 }
                 break;
         }
@@ -153,6 +175,7 @@ public class Principal extends ApplicationAdapter {
         if (pantallaSeleccionPersonaje != null) pantallaSeleccionPersonaje.dispose();
         if (pantallaSeleccionMapa != null) pantallaSeleccionMapa.dispose();
         if (pantallaJuego != null) pantallaJuego.dispose();
+        if (pantallaResultado != null) pantallaResultado.dispose();
         batch.dispose();
     }
 }
