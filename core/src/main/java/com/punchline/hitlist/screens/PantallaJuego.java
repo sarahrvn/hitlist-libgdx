@@ -47,7 +47,7 @@ public class PantallaJuego {
     private int contadorSegundosArma = 0;
     private boolean debeSpawnearEspada = false;
 
-    public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje p1Seleccionado/*, TipoPersonaje p2Seleccionado*/) {
+    public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje p1Seleccionado, TipoPersonaje p2Seleccionado) {
         mapa = new Mapa(mapaSeleccionado);
         HUD = new Hud();
 
@@ -65,12 +65,12 @@ public class PantallaJuego {
 
         // Crear Jugador 1
         Personaje p1 = new Personaje(p1Seleccionado);
-        p1.setPosition(POSICION_SPAWN.x - 4f, POSICION_SPAWN.y);
+        p1.setPosition(POSICION_SPAWN.x - 30f, POSICION_SPAWN.y);
         personajes.add(p1);
 
         // Crear Jugador 2
         Personaje p2 = new Personaje(p2Seleccionado);
-        p2.setPosition(POSICION_SPAWN.x + 4f, POSICION_SPAWN.y);
+        p2.setPosition(POSICION_SPAWN.x + 30f, POSICION_SPAWN.y);
         p2.caminarIzquierda(); // Mirar al rival
         personajes.add(p2);
 
@@ -197,6 +197,7 @@ public class PantallaJuego {
         for (Personaje personaje : personajes) {
             for (Rectangle vacio : mapa.getColisionesVacio()) {
                 if (personaje.getHitbox().overlaps(vacio)) {
+                    personaje.sacarVida();
                     if (personaje.estaMuerto()) {
                         terminarPartida();
                     } else {
@@ -208,7 +209,11 @@ public class PantallaJuego {
     }
 
     private void respawnearPersonaje(Personaje personaje) {
-        personaje.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
+        if (personaje == personajes.get(0)) {
+            personaje.setPosition(POSICION_SPAWN.x - 10f, POSICION_SPAWN.y);
+        } else if (personaje == personajes.get(1)) {
+            personaje.setPosition(POSICION_SPAWN.x + 10f, POSICION_SPAWN.y);
+        }
         personaje.resetear();
     }
 
