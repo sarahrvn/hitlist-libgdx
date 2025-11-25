@@ -121,18 +121,29 @@ public class Principal extends ApplicationAdapter {
                     pantallaJuego = new PantallaJuego(mapaElegido, seleccionP1, seleccionP2);
                     pantallaJuego.ajustarCamara(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     estadoActual = EstadoScreen.JUEGO;
-
-
-
                 }
-
                 break;
 
             case JUEGO:
                 pantallaJuego.render(delta);
                 if (pantallaJuego.debeVolverAlMenu()) {
-                    pantallaResultado = new PantallaResultado(personajeElegido, 1);
+                    int indiceGanador = pantallaJuego.getIndiceGanador();
+
+                    TipoPersonaje personajeGanador;
+                    int numeroJugadorGanador;
+
+                    if (indiceGanador == 0) {
+                        personajeGanador = seleccionP1;
+                        numeroJugadorGanador = 1;
+                    } else {
+                        personajeGanador = seleccionP2;
+                        numeroJugadorGanador = 2;
+                    }
+
+                    pantallaResultado = new PantallaResultado(personajeGanador, numeroJugadorGanador);
                     estadoActual = EstadoScreen.RESULTADO;
+
+                    pantallaJuego.dispose();
                     pantallaJuego = null;
                 }
                 break;
@@ -160,13 +171,11 @@ public class Principal extends ApplicationAdapter {
         }
     }
 
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
         if (pantallaJuego != null) {
             pantallaJuego.ajustarCamara(width, height);
         }
     }
-
 
     @Override
     public void dispose() {

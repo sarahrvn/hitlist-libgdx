@@ -35,6 +35,9 @@ public class PantallaResultado {
     private final GlyphLayout layout = new GlyphLayout();
     private float tiempoAnimacion = 0;
 
+    /**
+     * Constructor corregido: Recibe TipoPersonaje para saber qué imagen cargar.
+     */
     public PantallaResultado(TipoPersonaje personajeGanador, int numeroJugador) {
         FONDO_BASE = new Texture("fondos/Fondo_Seleccion_Personaje.png");
 
@@ -98,17 +101,15 @@ public class PantallaResultado {
         batch.begin();
 
         batch.draw(FONDO_BASE, 0, 0, camara.viewportWidth, camara.viewportHeight);
-
         batch.draw(IMAGEN_GANADOR, 0, 0, camara.viewportWidth, camara.viewportHeight);
 
+        // UI alineada a la derecha (75% del ancho)
         float ejeX = camara.viewportWidth * 0.75f;
 
         fontTitulo.setColor(Color.GOLD);
         layout.setText(fontTitulo, TEXTO_TITULO);
-        // Centramos el texto respecto a ese eje imaginario de la derecha
         fontTitulo.draw(batch, layout, ejeX - layout.width / 2f, camara.viewportHeight - 50f);
 
-        // Nombre del Jugador
         fontTitulo.setColor(Color.WHITE);
         layout.setText(fontTitulo, NOMBRE_JUGADOR);
         fontTitulo.draw(batch, layout, ejeX - layout.width / 2f, camara.viewportHeight - 130f);
