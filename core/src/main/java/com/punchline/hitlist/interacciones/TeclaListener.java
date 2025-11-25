@@ -184,6 +184,24 @@ public class TeclaListener implements InputProcessor {
         return false;
     }
 
+    public boolean isIzquierdaJustPressed() {
+        if (this.aJustPressed || this.leftJustPressed) {
+            this.aJustPressed = false;
+            this.leftJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isDerechaJustPressed() {
+        if (this.dJustPressed || this.rightJustPressed) {
+            this.dJustPressed = false;
+            this.rightJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+
     // Métodos obligatorios vacíos
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }

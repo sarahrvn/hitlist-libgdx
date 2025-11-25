@@ -27,6 +27,9 @@ logos/Punchline_Logo.png
 logos/Titulo_Mas_Chico.png
 mapas/bloque.tsx
 mapas/bloque_madera.png
+mapas/c/mapa_cartel.png
+mapas/c/mapa_cartel.tmx
+mapas/c/mapa_cartel.tsx
 mapas/c/mapa_concierto.tmx
 mapas/escalera.tsx
 mapas/escalera_madera.png
@@ -49,6 +52,10 @@ mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
+musica/combate.mp3
+musica/menu_musica.mp3
+sonidos/agarrar_espada.mp3
+sonidos/menu_mover.mp3
 sonidos/salto.wav
 sprites/Billie preview.png
 sprites/Billie_Eilish.png

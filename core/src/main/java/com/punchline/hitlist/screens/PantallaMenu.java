@@ -7,30 +7,24 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator; // Necesario para fuentes HD
-import com.punchline.hitlist.interacciones.TeclaListener; // Tu listener
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.punchline.hitlist.interacciones.TeclaListener;
+import com.punchline.hitlist.elementosJuego.GestorSonidos;
+import com.punchline.hitlist.elementosJuego.SonidoDisponible;
+import com.punchline.hitlist.elementosJuego.SonidoDisponible;
 
 public class PantallaMenu {
 
+    // ... (Variables existentes: FONDO, TITULO, font, etc.) ...
     private final Texture FONDO;
     private final Texture TITULO;
-    private BitmapFont font; // Quitamos el final para poder generarla
-
-    // Lógica de selección
+    private BitmapFont font;
     private int opcionSeleccionada = 0;
     private final String[] opciones = {"Local", "Online", "Salir"};
-
-    // Input
     private final TeclaListener teclaListener;
-
-    // Variables de estado
     private boolean quiereJugar = false;
     private boolean quiereSalir = false;
-
-    // Layout para medir texto
     private final GlyphLayout layout = new GlyphLayout();
-
-    // Variables para la animación
     private float tiempoAnimacion = 0;
 
     public PantallaMenu() {
@@ -40,7 +34,15 @@ public class PantallaMenu {
         teclaListener = new TeclaListener();
         Gdx.input.setInputProcessor(teclaListener);
 
-        // Fuente
+        // --- AUDIO ---
+        // 1. Cargar y reproducir música (gracias a la mejora, si ya suena, sigue de largo)
+        GestorSonidos.getInstancia().cargarMusica(SonidoDisponible.MUSICA_MENU);
+        GestorSonidos.getInstancia().reproducirMusica(SonidoDisponible.MUSICA_MENU, true);
+
+        // 2. Cargar el efecto de sonido del menú
+        GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.MENU);
+
+        // --- FUENTE ---
         try {
             FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fuentes/ari-w9500.ttf"));
             FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -49,9 +51,8 @@ public class PantallaMenu {
             parameter.borderColor = Color.BLACK;
             parameter.shadowOffsetX = 3;
             parameter.shadowOffsetY = 3;
-
             font = generator.generateFont(parameter);
-            generator.dispose(); // Limpia el generador
+            generator.dispose();
         } catch (Exception e) {
             font = new BitmapFont();
             font.getData().setScale(3f);
@@ -59,16 +60,11 @@ public class PantallaMenu {
     }
 
     public void render(SpriteBatch batch, OrthographicCamera camara) {
-        // Input
         manejarInput();
-
-        // ctualiza tiempo para la animación
         tiempoAnimacion += Gdx.graphics.getDeltaTime();
 
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-
-        // Fondo
         batch.draw(FONDO, 0, 0, camara.viewportWidth, camara.viewportHeight);
 
         // Título
@@ -78,57 +74,49 @@ public class PantallaMenu {
         float tituloY = camara.viewportHeight - tituloAlto - 50f;
         batch.draw(TITULO, tituloX, tituloY, tituloAncho, tituloAlto);
 
-
-        // ---- OPCIONES CON ANIMACIÓN ----
+        // Opciones
         float centroXPantalla = camara.viewportWidth / 2f;
         float yBase = tituloY - 100f;
 
         for (int i = 0; i < opciones.length; i++) {
             String textoADibujar = opciones[i];
-
             if (i == opcionSeleccionada) {
                 font.setColor(Color.ORANGE);
                 textoADibujar = "<< " + textoADibujar + " >>";
-
-                // Varía la escala entre 1.0 y 1.2
-                // Si usa la fuente default sin el .ttf cambia el 1.0f base por 3.0f
                 float escalaBase = 1.0f;
-                float variacion = (float)Math.sin(tiempoAnimacion * 6) * 0.1f; // Velocidad 6, Intensidad 0.1
-
+                float variacion = (float)Math.sin(tiempoAnimacion * 6) * 0.1f;
                 font.getData().setScale(escalaBase + variacion);
-
             } else {
                 font.setColor(Color.WHITE);
-                // Resetear escala a normal
                 font.getData().setScale(1.0f);
             }
-
             layout.setText(font, textoADibujar);
-
             float textoX = centroXPantalla - (layout.width / 2f);
-            float textoY = yBase - (i * 100f); // Separación vertical
-
+            float textoY = yBase - (i * 100f);
             font.draw(batch, layout, textoX, textoY);
         }
-
         batch.end();
     }
 
     private void manejarInput() {
-        // Moverse arriba (W o Flechita arriba)
         if (teclaListener.isArribaJustPressed()) {
             opcionSeleccionada--;
             if (opcionSeleccionada < 0) opcionSeleccionada = opciones.length - 1;
+            // SONIDO
+            GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.MENU);
         }
 
-        // Moverse abajo (S o Flechita abajo)
         if (teclaListener.isAbajoJustPressed()) {
             opcionSeleccionada++;
             if (opcionSeleccionada >= opciones.length) opcionSeleccionada = 0;
+            // SONIDO
+            GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.MENU);
         }
 
-        // Seleccionar (Enter)
         if (teclaListener.isEnterJustPressed()) {
+            // Opcional: Sonido de confirmar (por ahora uso el mismo)
+            GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.MENU);
+
             if (opcionSeleccionada == 0) {
                 quiereJugar = true;
             } else if (opcionSeleccionada == 2) {
@@ -144,6 +132,6 @@ public class PantallaMenu {
         FONDO.dispose();
         TITULO.dispose();
         font.dispose();
+        // NO detenemos la música aquí para que siga sonando en la selección de personaje
     }
 }
-

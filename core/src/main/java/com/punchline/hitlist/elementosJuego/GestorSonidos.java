@@ -1,4 +1,3 @@
-
 package com.punchline.hitlist.elementosJuego;
 
 import com.badlogic.gdx.Gdx;
@@ -13,10 +12,12 @@ public class GestorSonidos {
     private HashMap<SonidoDisponible, Sound> sonidos;
     private HashMap<SonidoDisponible, Music> musicas;
 
-    private float volumenSonidos = 0.7f;
-    private float volumenMusica = 0.6f;
+    private float volumenSonidos = 1f;
+    private float volumenMusica = 0.5f;
 
     private Music musicaActual = null;
+    // Variable para saber qué enum se está reproduciendo actualmente
+    private SonidoDisponible idMusicaActual = null;
 
     private GestorSonidos() {
         sonidos = new HashMap<>();
@@ -30,29 +31,36 @@ public class GestorSonidos {
         return instancia;
     }
 
-
-
-     // Carga un sonido en memoria
-
+    // --- CARGA ---
     public void cargarSonido(SonidoDisponible sonido) {
         if (!sonidos.containsKey(sonido)) {
             try {
                 Sound sound = Gdx.audio.newSound(Gdx.files.internal(sonido.getRutaArchivo()));
                 sonidos.put(sonido, sound);
-
             } catch (Exception e) {
+                Gdx.app.error("Audio", "Error cargando sonido: " + sonido, e);
             }
         }
     }
 
+    public void cargarMusica(SonidoDisponible musica) {
+        if (!musicas.containsKey(musica)) {
+            try {
+                Music music = Gdx.audio.newMusic(Gdx.files.internal(musica.getRutaArchivo()));
+                musicas.put(musica, music);
+            } catch (Exception e) {
+                Gdx.app.error("Audio", "Error cargando musica: " + musica, e);
+            }
+        }
+    }
 
+    // --- REPRODUCCION SONIDOS ---
     public void reproducirSonido(SonidoDisponible sonido) {
         Sound sound = sonidos.get(sonido);
         if (sound != null) {
             sound.play(volumenSonidos);
         }
     }
-
 
     public void reproducirSonido(SonidoDisponible sonido, float volumen) {
         Sound sound = sonidos.get(sonido);
@@ -61,26 +69,20 @@ public class GestorSonidos {
         }
     }
 
-
-
-    public void cargarMusica(SonidoDisponible musica) {
-        if (!musicas.containsKey(musica)) {
-            try {
-                Music music = Gdx.audio.newMusic(Gdx.files.internal(musica.getRutaArchivo()));
-                musicas.put(musica, music);
-            } catch (Exception e) {
-            }
-        }
-    }
-
-
+    // --- REPRODUCCION MUSICA (MEJORADO) ---
     public void reproducirMusica(SonidoDisponible musica, boolean loop) {
-        // Detener música actual si hay una
-        detenerMusica();
-
         Music music = musicas.get(musica);
+
         if (music != null) {
+            if (musicaActual == music && musicaActual.isPlaying()) {
+                return;
+            }
+
+            // Si es una canción diferente, detenemos la anterior
+            detenerMusica();
+
             musicaActual = music;
+            idMusicaActual = musica; // Guardamos cuál es
             music.setLooping(loop);
             music.setVolume(volumenMusica);
             music.play();
@@ -103,11 +105,11 @@ public class GestorSonidos {
         if (musicaActual != null) {
             musicaActual.stop();
             musicaActual = null;
+            idMusicaActual = null;
         }
     }
 
-    // ========== VOLUMEN ==========
-
+    // --- VOLUMEN ---
     public void setVolumenSonidos(float volumen) {
         this.volumenSonidos = Math.max(0f, Math.min(1f, volumen));
     }
@@ -118,16 +120,6 @@ public class GestorSonidos {
             musicaActual.setVolume(this.volumenMusica);
         }
     }
-
-    public float getVolumenSonidos() {
-        return volumenSonidos;
-    }
-
-    public float getVolumenMusica() {
-        return volumenMusica;
-    }
-
-    // ========== LIMPIEZA ==========
 
     public void dispose() {
         for (Sound sound : sonidos.values()) {

@@ -3,7 +3,7 @@ package com.punchline.hitlist.personajes;
 import com.punchline.hitlist.elementosJuego.Arma;
 
 public enum TipoPersonaje {
-    BILLIE_EILISH("Billie Eilish", Arma.MICROFONO, 10, 10, 10, 10, "sprites/Billie_Eilish.txt"),
+    BILLIE_EILISH("Billie Eilish", Arma.MICROFONO, 3, 8, 3, 7, "sprites/Billie_Eilish.txt"),
     MICHAEL_JACKSON("Michael Jackson", Arma.GUANTE, 5, 7, 3, 4, "sprites/Michael_Jackson.txt"),
     FRIDA_KAHLO("Frida Kahlo", Arma.PINCEL, 3, 5, 7, 6, "sprites/Frida_Kahlo.txt"),
     LEBRON_JAMES("Lebron James", Arma.PELOTA, 8, 4, 2, 2, "sprites/Lebron_James.txt");
