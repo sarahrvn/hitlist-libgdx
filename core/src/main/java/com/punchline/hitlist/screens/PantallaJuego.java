@@ -125,11 +125,6 @@ public class PantallaJuego {
 
     public void update(float delta) {
 
-        if (debeSpawnearEspada) {
-            spawnearEspadaReal();
-            debeSpawnearEspada = false;
-        }
-
         Gdx.input.setInputProcessor(teclaListener);
         if (teclaListener.isEscapeJustPressed()) {
             enPausa = !enPausa;
@@ -145,8 +140,15 @@ public class PantallaJuego {
             for (Personaje personaje : personajes) {
                 personaje.update(delta, mapa.getColisiones());
             }
-
             verificarColisionVacio();
+            verificarCombate();
+
+            // Espadas
+
+            if (debeSpawnearEspada) {
+                spawnearEspadaReal();
+                debeSpawnearEspada = false;
+            }
 
             Iterator<Espada> iter = espadasEnJuego.iterator();
             while(iter.hasNext()) {
@@ -190,6 +192,28 @@ public class PantallaJuego {
 
                 personaje.equiparArma();
                 espada.destruir();
+            }
+        }
+    }
+
+    private void verificarCombate() {
+        for (Personaje atacante : personajes) {
+            if (atacante.isAtacando()) { // Asumiendo que agregaste el getter isAtacando() en Personaje
+
+                for (Personaje victima : personajes) {
+                    if (atacante == victima) continue; // No pegarse a sí mismo
+
+                    // Usamos hitboxAtaque del atacante vs hitbox cuerpo victima
+                    // NOTA: Necesitas agregar el getter getHitboxAtaque() en Personaje si no es público
+                    if (atacante.getHitboxAtaque().overlaps(victima.getHitbox())) {
+
+                        // Calcular dirección: 1 (derecha) o -1 (izquierda)
+                        int direccion = (atacante.getHitbox().x < victima.getHitbox().x) ? 1 : -1;
+
+                        // El personaje maneja la física
+                        victima.recibirGolpe(atacante.getFuerza().getValor(), direccion);
+                    }
+                }
             }
         }
     }
