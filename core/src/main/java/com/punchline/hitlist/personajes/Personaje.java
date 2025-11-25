@@ -60,6 +60,7 @@ public class Personaje {
     private final float COOLDOWN_GOLPE = 1f; // Espera 1 segundo entre golpes
     private int vidas = 3;
     private boolean estaMuerto = false;
+    private float danioAcumulado = 0;
 
     // Hitbox del golpe (caja roja)
     private Rectangle hitboxAtaque;
@@ -228,6 +229,31 @@ public class Personaje {
             hitboxAtaque.setPosition(boundingBox.x + boundingBox.width, boundingBox.y + 20);
         else
             hitboxAtaque.setPosition(boundingBox.x - hitboxAtaque.getWidth(), boundingBox.y + 20);
+    }
+
+    public void recibirGolpe(int fuerzaAtacante, int direccionEmpuje) {
+        // Calcular danio
+        float reduccionDefensa = this.defensa.getValor() * 0.5f;
+        float danioRecibido = (10 + fuerzaAtacante * 2) - reduccionDefensa;
+        if (danioRecibido < 1) danioRecibido = 1; // Mínimo 1 de daño
+
+        this.danioAcumulado += danioRecibido;
+
+        // Calcular empuje
+        // Si tiene 0 danio, factor es 1. Si tiene 100 danio, factor es 3.
+        float factorVuelo = 1f + (this.danioAcumulado / 40f);
+
+        // Base del empuje depende de la fuerza del enemigo
+        float empujeBaseX = 300f + (fuerzaAtacante * 40f);
+        float empujeBaseY = 200f + (fuerzaAtacante * 20f);
+
+        // Aplicamos la fórmula: Base * FactorVuelo
+        this.velocidadX = empujeBaseX * factorVuelo * direccionEmpuje;
+        this.velocidadY = empujeBaseY * factorVuelo; // Siempre un poco hacia arriba
+
+        // Estado
+        this.enElSuelo = false;
+        this.intentandoMoverse = false; // "Mareo" momentáneo (se queda quieto un toque)
     }
 
     public void sacarVida() {

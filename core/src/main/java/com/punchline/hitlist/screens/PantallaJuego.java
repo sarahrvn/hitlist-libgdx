@@ -29,6 +29,7 @@ public class PantallaJuego {
     // Estados
     private boolean enPausa = false;
     private boolean volverAlMenu = false;
+    int indiceGanador = 0;
 
     // Variables de tiempo con hilo
     private int segundosRestantes = 60;
@@ -199,7 +200,7 @@ public class PantallaJuego {
                 if (personaje.getHitbox().overlaps(vacio)) {
                     personaje.sacarVida();
                     if (personaje.estaMuerto()) {
-                        terminarPartida();
+                        terminarPartida(personaje);
                     } else {
                         respawnearPersonaje(personaje);
                     }
@@ -217,9 +218,17 @@ public class PantallaJuego {
         personaje.resetear();
     }
 
-    private void terminarPartida() {
+    private void terminarPartida(Personaje personaje) {
         if (hiloTiempo != null) { hiloTiempo.terminar(); }
+        if (personaje == this.personajes.get(0)) {
+            indiceGanador = 1;
+        } else if (personaje == this.personajes.get(1)) {
+            indiceGanador = 0;
+        }
         volverAlMenu = true;
+    }
+
+    public int getIndiceGanador() { return this.indiceGanador;
     }
 
     public void render(float delta) {
