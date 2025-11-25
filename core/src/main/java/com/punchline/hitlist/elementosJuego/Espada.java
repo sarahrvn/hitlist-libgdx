@@ -13,12 +13,12 @@ public class Espada {
     private final float GRAVEDAD = -1000;
     private boolean activa = true;
     private Arma tipo;
+    private static final Texture TEXTURA = new Texture("elementos/espada.png");
 
-    public Espada(float x, float y, Arma tipo, Texture texturaCompartida) {
+    public Espada(float x, float y, Arma tipo) {
         this.tipo = tipo;
 
-        // Usamos la textura que nos pasan desde PantallaJuego
-        this.sprite = new Sprite(texturaCompartida);
+        this.sprite = new Sprite(TEXTURA);
         this.sprite.setPosition(x, y);
         this.boundingBox = new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
     }
@@ -47,7 +47,5 @@ public class Espada {
     public void destruir() { this.activa = false; }
 
     public void dispose() {
-        // NO HACER DISPOSE ACÁ.
-        // La textura se comparte entre todas las espadas y la maneja PantallaJuego.
     }
 }

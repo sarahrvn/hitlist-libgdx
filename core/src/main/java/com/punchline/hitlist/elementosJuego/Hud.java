@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.punchline.hitlist.personajes.Personaje;
 
 public class Hud {
 
@@ -14,9 +16,10 @@ public class Hud {
     private BitmapFont font;
     private Texture iconoVida;
 
-    private int vidas = 3;
-    private float tiempoRestante = 60f;
+    private int vidasP1 = 3;
+    private int vidasP2 = 3;
     private boolean pausado = false;
+    private float tiempoRestante = 0;
 
     public Hud() {
         camaraHud = new OrthographicCamera();
@@ -30,25 +33,39 @@ public class Hud {
         font = new BitmapFont();
     }
 
-    public void mostrarPausa(boolean pausado) {
-        this.pausado = pausado;
-    }
-
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, Array<Personaje> personajes) {
         batch.setProjectionMatrix(camaraHud.combined);
         batch.begin();
 
-        // Dibujar corazones
-        for (int i = 0; i < vidas; i++) {
-            batch.draw(iconoVida, 10 + i * 40, viewport.getWorldHeight() - 50, 32, 32);
+        float anchoPantalla = viewport.getWorldWidth();
+        float altoPantalla = viewport.getWorldHeight();
+
+        // Dibujar vidas
+        for (int i = 0; i < personajes.size; i++) {
+            Personaje personaje = personajes.get(i);
+
+            // Dibuja según el índice (0 es izq, 1 es der)
+            float startX = (i == 0) ? 10 : anchoPantalla - 40;
+            int direccion = (i == 0) ? 1 : -1; // P1 dibuja hacia derecha, P2 hacia izquierda
+
+            font.draw(batch, "P" + (i + 1), startX, altoPantalla - 15);
+
+            for (int v = 0; v < personaje.getVidas(); v++) {
+                // Cálculo matemático para poner los corazones en fila
+                float x = startX + (v * 35 * direccion);
+                // Ajuste para P2 para que no se superponga con el texto
+                if(i == 1) x -= 30;
+
+                batch.draw(iconoVida, x, altoPantalla - 50, 30, 30);
+            }
         }
 
         // Dibujar tiempo
-        font.draw(batch, "Tiempo: " + (int) tiempoRestante, viewport.getWorldWidth() - 130, viewport.getWorldHeight() - 20);
+        font.draw(batch, "Tiempo: " + (int) tiempoRestante, anchoPantalla - 130, altoPantalla - 20);
 
         // Mostrar pausa
         if (pausado) {
-            font.draw(batch, "PAUSADO", viewport.getWorldWidth() / 2 - 40, viewport.getWorldHeight() / 2);
+            font.draw(batch, "PAUSADO", anchoPantalla / 2 - 40, altoPantalla / 2);
         }
 
         batch.end();
@@ -66,38 +83,8 @@ public class Hud {
     public void setTiempoRestante(float tiempoRestante) {
         this.tiempoRestante = tiempoRestante;
     }
-
-    // ---- MÉTODOS PARA SISTEMA DE VIDAS ----
-
-    /**
-     * Quita una vida al personaje
-     * @return true si quedan vidas, false si ya no hay más
-     */
-    public boolean quitarVida() {
-        if (vidas > 0) {
-            vidas--;
-        }
-        return vidas > 0;
+    public void mostrarPausa(boolean pausado) {
+        this.pausado = pausado;
     }
 
-    /**
-     * Obtiene el número actual de vidas
-     */
-    public int getVidas() {
-        return vidas;
-    }
-
-    /**
-     * Verifica si el jugador está muerto (sin vidas)
-     */
-    public boolean estaMuerto() {
-        return vidas <= 0;
-    }
-
-    /**
-     * Restaura las vidas a un valor específico (útil para power-ups)
-     */
-    public void setVidas(int vidas) {
-        this.vidas = Math.max(0, vidas); // No permitir valores negativos
-    }
 }

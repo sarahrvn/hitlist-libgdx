@@ -28,34 +28,44 @@ public class Personaje {
     private float velocidadY = 0;
     private float velocidadX = 0;
 
-    //
-    private float velocidadCaminarActual;
+    // Variable modificada por stat
+    private float velocidadCaminar;
+
+    // Gravedad
     private final float GRAVEDAD = -1500;
     private final float VELOCIDAD_SALTO = 540;
+
+    // Lógica de saltos
     private boolean enElSuelo = false;
-    private int saltosDisponibles = 2;
+    private int MAX_SALTOS = 2;
+    private int saltosDisponibles = MAX_SALTOS;
+
+    // Lógica de pared wall slide
     private boolean tocandoPared = false;
     private boolean intentandoMoverse = false;
+    private final float VELOCIDAD_DESLIZAMIENTO = -80;
 
+    // Animación
     private float tiempoAnimacionCorrer = 0f;
-    private final float TIEMPO_CAMBIO_SPRITE = 0.1f;
+    private final float TIEMPO_CAMBIO_SPRITE = 0.2f;
     private boolean usandoCorrer1 = true;
     private float tiempoUltimoPaso = 0f;
-    private final float INTERVALO_PASOS = 0.1f;
+    private final float INTERVALO_PASOS = 0.2f;
 
-    // ---- COMBATE ----
+    // Combate
     private boolean atacando = false;
     private float tiempoAtaque = 0; // Cuánto tiempo lleva activo el hitbox
     private float tiempoCooldown = 0; // Tiempo de espera para volver a pegar
-
-    private final float DURACION_GOLPE = 0.2f; // El golpe dura 0.2 segundos
-    private final float COOLDOWN_GOLPE = 0.5f; // Espera medio segundo entre golpes
+    private final float DURACION_GOLPE = 0.5f; // El golpe dura 0.5 segundos
+    private final float COOLDOWN_GOLPE = 1f; // Espera 1 segundo entre golpes
+    private int vidas = 3;
+    private boolean estaMuerto = false;
 
     // Hitbox del golpe (caja roja)
     private Rectangle hitboxAtaque;
 
     // Variable para debuguear (para ver la caja roja)
-    private boolean mostrarHitbox = false;
+    private boolean mostrarHitbox = true;
 
     public Personaje(TipoPersonaje tipo) {
         this.TIPO_PERSONAJE = tipo;
@@ -69,76 +79,15 @@ public class Personaje {
 
         recalcularAtributos();
         boundingBox = new Rectangle(0, 0, sprite.getWidth(), sprite.getHeight());
-    }
 
-    public Arma getArmaAsignada() {
-        return this.TIPO_PERSONAJE.getArmaAsignada();
-    }
-
-    private void recalcularAtributos() {
-        int fBase = this.TIPO_PERSONAJE.getFuerza();
-        int dBase = this.TIPO_PERSONAJE.getDefensa();
-        int vBase = this.TIPO_PERSONAJE.getVelocidad();
-
-        int modF = 0, modD = 0, modV = 0;
-
-        if (armaEquipada != null) {
-            modF = this.armaEquipada.getModFuerza();
-            modD = this.armaEquipada.getModDefensa();
-            modV = this.armaEquipada.getModVelocidad();
-        }
-
-        this.fuerza.setEstadistica(fBase + modF);
-        this.defensa.setEstadistica(dBase + modD);
-        this.velocidad.setEstadistica(vBase + modV);
-
-        this.velocidadCaminarActual = 100f + (this.velocidad.getValor() * 30f);
-    }
-
-    private int limitarModificador(int valor) {
-        if (valor > 2) return 2;
-        if (valor < -2) return -2;
-        return valor;
-    }
-
-    public void equiparArma(Arma arma) {
-        this.armaEquipada = arma;
-        recalcularAtributos();
-        actualizarSpriteVisual();
-    }
-
-    private void actualizarSpriteVisual() {
-        boolean flip = sprite.isFlipX();
-        String nombreRegion;
-
-        if (intentandoMoverse) {
-            if (usandoCorrer1) {
-                if (armaEquipada != null) nombreRegion = "correr1_arma";
-                else nombreRegion = "correr1";
-            } else {
-                if (armaEquipada != null) nombreRegion = "correr2_arma";
-                else nombreRegion = "correr2";
-            }
-        } else {
-            if (armaEquipada != null) nombreRegion = "idle_arma";
-            else nombreRegion = "idle";
-        }
-
-        Sprite nuevo = ATLAS.createSprite(nombreRegion);
-        if (nuevo == null) {
-            nuevo = ATLAS.createSprite(nombreRegion.replace("_arma", ""));
-        }
-
-        this.sprite = nuevo;
-        if (flip && !sprite.isFlipX()) sprite.flip(true, false);
-        else if (!flip && sprite.isFlipX()) sprite.flip(true, false);
-
-        sprite.setPosition(boundingBox.x, boundingBox.y);
+        // Hitbox del ataque (tamaño de ejemplo: 40x40)
+        hitboxAtaque = new Rectangle(0, 0, 40, 40);
     }
 
     public void update(float delta, Array<Rectangle> colisiones) {
         delta = Math.min(delta, 1/30f);
 
+        // Sprite
         if (intentandoMoverse) {
             tiempoAnimacionCorrer += delta;
             tiempoUltimoPaso += delta;
@@ -148,20 +97,20 @@ public class Personaje {
             if (tiempoAnimacionCorrer >= TIEMPO_CAMBIO_SPRITE) {
                 tiempoAnimacionCorrer = 0f;
                 usandoCorrer1 = !usandoCorrer1;
-                actualizarSpriteVisual();
+                actualizarSprite();
             }
         } else {
-            actualizarSpriteVisual();
+            actualizarSprite();
         }
 
-        boolean estabaEnElAire = !enElSuelo;
         boundingBox.x += velocidadX * delta;
         checkColisionX(colisiones);
 
+        // Lógica wall slide y gravedad normal
         boolean agarradoPared = !enElSuelo && tocandoPared && velocidadY < 0 && intentandoMoverse;
         if (agarradoPared) {
-            velocidadY = -100;
-            saltosDisponibles = 2;
+            velocidadY = VELOCIDAD_DESLIZAMIENTO;
+            saltosDisponibles = MAX_SALTOS;
         } else {
             velocidadY += GRAVEDAD * delta;
         }
@@ -169,17 +118,21 @@ public class Personaje {
         boundingBox.y += velocidadY * delta;
         checkColisionY(colisiones);
 
-        if (estabaEnElAire && enElSuelo && velocidadY <= 0) {
+        // Sonido al caer
+        if (!enElSuelo && velocidadY <= 0) {
             GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.CAIDA, 0.4f);
         }
 
         sprite.setPosition(boundingBox.x, boundingBox.y);
         velocidadX = 0;
         intentandoMoverse = false;
+
+        updateCombate(delta);
     }
 
     public void dibujar(SpriteBatch batch) { sprite.draw(batch); }
 
+    // ---- MOVIMIENTOS ---
     public void saltar() {
         if (saltosDisponibles > 0) {
             velocidadY = VELOCIDAD_SALTO;
@@ -189,16 +142,14 @@ public class Personaje {
         }
     }
     public void caminarIzquierda() {
-        velocidadX = -velocidadCaminarActual;
+        velocidadX = -velocidadCaminar;
         intentandoMoverse = true;
-        if (velocidadX == 0) actualizarSpriteVisual();
-        if (!sprite.isFlipX()) sprite.flip(true, false);
+        actualizarSprite();
     }
     public void caminarDerecha() {
-        velocidadX = velocidadCaminarActual;
+        velocidadX = velocidadCaminar;
         intentandoMoverse = true;
-        if (velocidadX == 0) actualizarSpriteVisual();
-        if (sprite.isFlipX()) sprite.flip(true, false);
+        actualizarSprite();
     }
 
     private void checkColisionX(Array<Rectangle> colisiones) {
@@ -223,7 +174,7 @@ public class Personaje {
                 if (velocidadY < 0) {
                     boundingBox.y = colision.y + colision.height;
                     enElSuelo = true;
-                    saltosDisponibles = 2;
+                    saltosDisponibles = MAX_SALTOS;
                     velocidadY = 0;
                 } else if (velocidadY > 0) {
                     boundingBox.y = colision.y - boundingBox.height;
@@ -234,26 +185,152 @@ public class Personaje {
         }
     }
 
-    public void setPosition(float x, float y) {
-        boundingBox.setPosition(x - boundingBox.width / 2f, y - boundingBox.height / 2f);
+    // ---- COMBATE ----
+    public void equiparArma() {
+        this.armaEquipada = this.TIPO_PERSONAJE.getArmaAsignada();
+        recalcularAtributos();
+        actualizarSprite();
+    }
+
+    public void atacar() {
+        // Solo ataca si no está ya atacando y si el cooldown terminó
+        if (!atacando && tiempoCooldown <= 0) {
+            atacando = true;
+            tiempoAtaque = 0; // Reinicia cronómetro del golpe
+
+            posicionarHitbox();
+            actualizarSprite();
+        }
+    }
+
+    private void updateCombate(float delta) {
+        if (tiempoCooldown > 0) {
+            tiempoCooldown -= delta;
+        }
+
+        if (atacando) {
+            tiempoAtaque += delta;
+
+            posicionarHitbox();
+
+            // Si pasó el tiempo del golpe deja de atacar
+            if (tiempoAtaque >= DURACION_GOLPE) {
+                atacando = false;
+                tiempoCooldown = COOLDOWN_GOLPE;
+                actualizarSprite();
+            }
+        }
+    }
+
+    private void posicionarHitbox() {
+        // Inicializar el hitbox y moverlo junto con el personaje por si se mueve mientras pega
+        if (!sprite.isFlipX())
+            hitboxAtaque.setPosition(boundingBox.x + boundingBox.width, boundingBox.y + 20);
+        else
+            hitboxAtaque.setPosition(boundingBox.x - hitboxAtaque.getWidth(), boundingBox.y + 20);
+    }
+
+    public void sacarVida() {
+        if (this.vidas > 0) {
+            this.vidas--;
+        }
+        if (vidas <= 0) {
+            this.estaMuerto = true;
+        }
+    }
+
+    public boolean estaMuerto() {
+        return this.estaMuerto;
+    }
+
+    private void recalcularAtributos() {
+        int fBase = this.TIPO_PERSONAJE.getFuerza();
+        int dBase = this.TIPO_PERSONAJE.getDefensa();
+        int vBase = this.TIPO_PERSONAJE.getVelocidad();
+
+        int modF = 0, modD = 0, modV = 0;
+
+        if (armaEquipada != null) {
+            modF = this.armaEquipada.getModFuerza();
+            modD = this.armaEquipada.getModDefensa();
+            modV = this.armaEquipada.getModVelocidad();
+        }
+
+        this.fuerza.setEstadistica(fBase + modF);
+        this.defensa.setEstadistica(dBase + modD);
+        this.velocidad.setEstadistica(vBase + modV);
+
+        this.velocidadCaminar = 100f + (this.velocidad.getValor() * 30f);
+    }
+
+    private void actualizarSprite() {
+        String nombreRegion;
+
+        if (atacando) {
+            nombreRegion = "golpe1";
+        } else if (intentandoMoverse) {
+            if (usandoCorrer1) {
+                nombreRegion = "correr1";
+            } else {
+                nombreRegion = "correr2";
+            }
+        } else {
+            nombreRegion = "idle";
+        }
+
+        if(isArmaEquipada()) {
+            nombreRegion = nombreRegion + "_arma";
+        }
+
+        this.sprite = ATLAS.createSprite(nombreRegion);
+        if(velocidadX < 0){
+            if (!sprite.isFlipX()) {
+                sprite.flip(true, false);
+            }
+        } else if (velocidadX > 0) {
+            if (sprite.isFlipX()) {
+                sprite.flip(true, false);
+            }
+        }
+
         sprite.setPosition(boundingBox.x, boundingBox.y);
     }
-    public Rectangle getHitbox() { return boundingBox; }
 
-    // --- MODIFICADO: ELIMINA EL ARMA AL RESPAWNEAR ---
-    public void resetearVelocidad() {
+    // Resetear valores pj
+    public void resetear() {
         velocidadX = 0;
         velocidadY = 0;
         enElSuelo = false;
-        saltosDisponibles = 2;
+        saltosDisponibles = MAX_SALTOS;
         intentandoMoverse = false;
 
-        // Quitamos el arma
+        // Le saca el arma
         this.armaEquipada = null;
-        // Reseteamos stats a base
+
+        // Resetea stats a base
         recalcularAtributos();
 
-        actualizarSpriteVisual();
+        actualizarSprite();
+    }
+
+    public Arma getArmaAsignada() {
+        return this.TIPO_PERSONAJE.getArmaAsignada();
+    }
+    public boolean isArmaEquipada() {
+        if (this.armaEquipada != null) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public Rectangle getHitbox() { return boundingBox; }
+
+    public int getVidas() { return this.vidas;}
+
+    public void setPosition(float x, float y) {
+        boundingBox.setPosition(x - boundingBox.width / 2f, y - boundingBox.height / 2f);
+        sprite.setPosition(boundingBox.x, boundingBox.y);
     }
 
     public void dispose() { ATLAS.dispose(); }

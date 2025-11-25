@@ -6,11 +6,11 @@ import com.badlogic.gdx.Input.Keys;
 public class TeclaListener implements InputProcessor {
     // Jugador 1 (WASD)
     private boolean w = false, a = false, s = false, d = false;
-    private boolean wJustPressed = false, sJustPressed = false, eJustPressed = false;;
+    private boolean wJustPressed = false, sJustPressed = false, eJustPressed = false, vJustPressed = false;;
 
     // Jugador 2 (Flechitas)
     private boolean up = false, down = false, left = false, right = false;
-    private boolean upJustPressed = false, downJustPressed = false, iJustPressed = false;
+    private boolean upJustPressed = false, downJustPressed = false, iJustPressed = false, oJustPressed = false;
 
     // Generales
     private boolean escape = false, escapeJustPressed = false;
@@ -24,6 +24,7 @@ public class TeclaListener implements InputProcessor {
         if(keycode == Keys.A) { a = true; }
         if(keycode == Keys.D) { d = true; }
         if(keycode == Keys.E) { eJustPressed = true; }
+        if(keycode == Keys.V) { vJustPressed = true; }
 
         // P2
         if(keycode == Keys.UP) { up = true; upJustPressed = true; }
@@ -31,6 +32,8 @@ public class TeclaListener implements InputProcessor {
         if(keycode == Keys.LEFT) { left = true; }
         if(keycode == Keys.RIGHT) { right = true; }
         if(keycode == Keys.I) { iJustPressed = true; }
+        if(keycode == Keys.O) { oJustPressed = true; }
+
 
         // General
         if(keycode == Keys.ESCAPE) { escape = true; escapeJustPressed = true; }
@@ -70,6 +73,13 @@ public class TeclaListener implements InputProcessor {
         }
         return false;
     }
+    public boolean isP1AtacarJustPressed() {
+        if (vJustPressed) {
+            vJustPressed = false;
+            return true;
+        }
+        return false;
+    }
 
     // ---- Getters para Jugador 2 ----
     public boolean isP2ArribaJustPressed() {
@@ -85,6 +95,13 @@ public class TeclaListener implements InputProcessor {
     public boolean isP2AgarrarJustPressed() {
         if (iJustPressed) {
             iJustPressed = false;
+            return true;
+        }
+        return false;
+    }
+    public boolean isP2AtacarJustPressed() {
+        if (oJustPressed) {
+            oJustPressed = false;
             return true;
         }
         return false;

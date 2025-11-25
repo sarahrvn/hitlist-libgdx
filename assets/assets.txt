@@ -72,4 +72,3 @@ sprites/Sprite Sheet Michael Jackson.png
 sprites/Sprite Sheet Sabrina.png
 sprites/sabrina_carpenter.png
 sprites/sabrina_carpenter.txt
-sprites/tipazo.png
