@@ -22,7 +22,7 @@ public class Principal extends ApplicationAdapter {
     private PantallaResultado pantallaResultado;
     private EstadoScreen estadoActual;
 
-    private TipoPersonaje personajeElegido;
+    private TipoPersonaje seleccionP1, seleccionP2;
     private MapaDisponible mapaElegido;
 
     private float tiempo = 0;
@@ -99,8 +99,9 @@ public class Principal extends ApplicationAdapter {
 
                 pantallaSeleccionPersonaje.render(batch, camara);
 
-                if (pantallaSeleccionPersonaje.hayPersonajeSeleccionado()) {
-                    personajeElegido = pantallaSeleccionPersonaje.getPersonajeSeleccionado();
+                if (pantallaSeleccionPersonaje.estanTodosSeleccionados()) {
+                    seleccionP1 = pantallaSeleccionPersonaje.getSeleccionP1();
+                    seleccionP2 = pantallaSeleccionPersonaje.getSeleccionP2();
                     pantallaSeleccionMapa = new PantallaSeleccionMapa();
                     estadoActual = EstadoScreen.SELECCION_DE_MAPA;
                 }
@@ -117,7 +118,7 @@ public class Principal extends ApplicationAdapter {
 
                 if (pantallaSeleccionMapa.hayMapaSeleccionado()) {
                     mapaElegido = pantallaSeleccionMapa.getMapaSeleccionado();
-                    pantallaJuego = new PantallaJuego(mapaElegido, personajeElegido);
+                    pantallaJuego = new PantallaJuego(mapaElegido, seleccionP1, seleccionP2);
                     pantallaJuego.ajustarCamara(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     estadoActual = EstadoScreen.JUEGO;
 

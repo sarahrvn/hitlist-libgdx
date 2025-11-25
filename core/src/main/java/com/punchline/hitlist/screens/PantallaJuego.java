@@ -1,7 +1,6 @@
 package com.punchline.hitlist.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,7 +21,7 @@ import java.util.Random;
 
 public class PantallaJuego {
     private Mapa mapa;
-    private final Personaje PERSONAJE_1;
+    private Array<Personaje> personajes;
     private final Hud HUD;
     private final OrthographicCamera camaraJuego;
     private final Viewport viewportJuego;
@@ -30,6 +29,7 @@ public class PantallaJuego {
     // Estados
     private boolean enPausa = false;
     private boolean volverAlMenu = false;
+    int indiceGanador = 0;
 
     // Variables de tiempo con hilo
     private int segundosRestantes = 60;
@@ -48,11 +48,8 @@ public class PantallaJuego {
     private int contadorSegundosArma = 0;
     private boolean debeSpawnearEspada = false;
 
-    private static final Texture TEXTURA_ESPADA = new Texture("elementos/espada.png");
-
-    public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje personajeSeleccionado) {
+    public PantallaJuego(MapaDisponible mapaSeleccionado, TipoPersonaje p1Seleccionado, TipoPersonaje p2Seleccionado) {
         mapa = new Mapa(mapaSeleccionado);
-        PERSONAJE_1 = new Personaje(personajeSeleccionado);
         HUD = new Hud();
 
         camaraJuego = new OrthographicCamera();
@@ -64,7 +61,19 @@ public class PantallaJuego {
         float spawnX = mapa.getAncho() / 2f;
         float spawnY = mapa.getAlto() * 0.8f;
         POSICION_SPAWN = new Vector2(spawnX, spawnY);
-        PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
+
+        personajes = new Array<>();
+
+        // Crear Jugador 1
+        Personaje p1 = new Personaje(p1Seleccionado);
+        p1.setPosition(POSICION_SPAWN.x - 30f, POSICION_SPAWN.y);
+        personajes.add(p1);
+
+        // Crear Jugador 2
+        Personaje p2 = new Personaje(p2Seleccionado);
+        p2.setPosition(POSICION_SPAWN.x + 30f, POSICION_SPAWN.y);
+        p2.caminarIzquierda(); // Mirar al rival
+        personajes.add(p2);
 
         batch = new SpriteBatch();
         teclaListener = new TeclaListener();
@@ -80,7 +89,7 @@ public class PantallaJuego {
 
     private void cargarSonidos() {
         GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.SALTO);
-        //GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.CAIDA);
+        GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.CAIDA);
     }
 
     private void reproducirMusicaMapa() {
@@ -104,25 +113,24 @@ public class PantallaJuego {
             }
         }
     }
-
     private void spawnearEspadaReal() {
         float w = mapa.getAncho();
         float[] posX = { w * 0.2f, w * 0.5f, w * 0.8f };
         float x = posX[random.nextInt(3)];
         float y = POSICION_SPAWN.y;
 
-        Espada nueva = new Espada(x, y, null, TEXTURA_ESPADA);
+        Espada nueva = new Espada(x, y, null);
         espadasEnJuego.add(nueva);
     }
 
     public void update(float delta) {
+
         if (debeSpawnearEspada) {
             spawnearEspadaReal();
             debeSpawnearEspada = false;
         }
 
         Gdx.input.setInputProcessor(teclaListener);
-
         if (teclaListener.isEscapeJustPressed()) {
             enPausa = !enPausa;
             if(enPausa) GestorSonidos.getInstancia().pausarMusica();
@@ -131,23 +139,21 @@ public class PantallaJuego {
         HUD.mostrarPausa(enPausa);
 
         if (!enPausa) {
-            if (teclaListener.isP1ArribaJustPressed()) PERSONAJE_1.saltar();
-            if (teclaListener.isP1Izquierda()) PERSONAJE_1.caminarIzquierda();
-            if (teclaListener.isP1Derecha()) PERSONAJE_1.caminarDerecha();
+            manejarInput();
 
-            if (teclaListener.isP1AgarrarJustPressed()) {
-                verificarAgarre();
+            // Actualizar pjs
+            for (Personaje personaje : personajes) {
+                personaje.update(delta, mapa.getColisiones());
             }
 
-            PERSONAJE_1.update(delta, mapa.getColisiones());
             verificarColisionVacio();
 
             Iterator<Espada> iter = espadasEnJuego.iterator();
             while(iter.hasNext()) {
-                Espada e = iter.next();
-                e.update(delta, mapa.getColisiones());
-                if (!e.isActiva()) {
-                    e.dispose();
+                Espada espada = iter.next();
+                espada.update(delta, mapa.getColisiones());
+                if (!espada.isActiva()) {
+                    espada.dispose();
                     iter.remove();
                 }
             }
@@ -155,40 +161,74 @@ public class PantallaJuego {
         HUD.setTiempoRestante(segundosRestantes);
     }
 
-    // ✅ MODIFICADO: ya no importa qué espada sea
-    private void verificarAgarre() {
-        Rectangle hitboxPJ = PERSONAJE_1.getHitbox();
+    private void manejarInput() {
+        Personaje p1 = personajes.get(0);
+        Personaje p2 = personajes.get(1);
+
+        // Inputs P1
+        if (teclaListener.isP1ArribaJustPressed()) { p1.saltar(); }
+        if (teclaListener.isP1Izquierda()) { p1.caminarIzquierda(); }
+        if (teclaListener.isP1Derecha()) { p1.caminarDerecha(); }
+        if (teclaListener.isP1ArribaJustPressed()) { p1.saltar(); }
+        if (teclaListener.isP1AgarrarJustPressed()) { verificarAgarre(p1); }
+        if (teclaListener.isP1AtacarJustPressed()) { p1.atacar(); }
+
+        // Inputs P2
+        if (teclaListener.isP2ArribaJustPressed()) { p2.saltar(); }
+        if (teclaListener.isP2Izquierda()) { p2.caminarIzquierda(); }
+        if (teclaListener.isP2Derecha()) { p2.caminarDerecha(); }
+        if (teclaListener.isP2ArribaJustPressed()) { p2.saltar(); }
+        if (teclaListener.isP2AgarrarJustPressed()) { verificarAgarre(p2); }
+        if (teclaListener.isP2AtacarJustPressed()) { p2.atacar(); }
+    }
+
+    private void verificarAgarre(Personaje personaje) {
+        Rectangle hitboxPJ = personaje.getHitbox();
 
         for(Espada espada : espadasEnJuego) {
-            if(hitboxPJ.overlaps(espada.getArea())) {
+            if(hitboxPJ.overlaps(espada.getArea()) && !personaje.isArmaEquipada()) {
 
-                // El personaje equipa SU arma propia
-                Arma armaPropia = PERSONAJE_1.getArmaAsignada();
-                PERSONAJE_1.equiparArma(armaPropia);
-
+                personaje.equiparArma();
                 espada.destruir();
-                break;
             }
         }
     }
 
     private void verificarColisionVacio() {
-        for (Rectangle vacio : mapa.getColisionesVacio()) {
-            if (PERSONAJE_1.getHitbox().overlaps(vacio)) {
-                respawnearPersonaje();
-                break;
+        for (Personaje personaje : personajes) {
+            for (Rectangle vacio : mapa.getColisionesVacio()) {
+                if (personaje.getHitbox().overlaps(vacio)) {
+                    personaje.sacarVida();
+                    if (personaje.estaMuerto()) {
+                        terminarPartida(personaje);
+                    } else {
+                        respawnearPersonaje(personaje);
+                    }
+                }
             }
         }
     }
 
-    private void respawnearPersonaje() {
-        if (HUD.quitarVida()) {
-            PERSONAJE_1.setPosition(POSICION_SPAWN.x, POSICION_SPAWN.y);
-            PERSONAJE_1.resetearVelocidad();
-        } else {
-            volverAlMenu = true;
-            if (hiloTiempo != null) hiloTiempo.terminar();
+    private void respawnearPersonaje(Personaje personaje) {
+        if (personaje == personajes.get(0)) {
+            personaje.setPosition(POSICION_SPAWN.x - 10f, POSICION_SPAWN.y);
+        } else if (personaje == personajes.get(1)) {
+            personaje.setPosition(POSICION_SPAWN.x + 10f, POSICION_SPAWN.y);
         }
+        personaje.resetear();
+    }
+
+    private void terminarPartida(Personaje personaje) {
+        if (hiloTiempo != null) { hiloTiempo.terminar(); }
+        if (personaje == this.personajes.get(0)) {
+            indiceGanador = 1;
+        } else if (personaje == this.personajes.get(1)) {
+            indiceGanador = 0;
+        }
+        volverAlMenu = true;
+    }
+
+    public int getIndiceGanador() { return this.indiceGanador;
     }
 
     public void render(float delta) {
@@ -207,10 +247,12 @@ public class PantallaJuego {
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
         for(Espada e : espadasEnJuego) e.render(batch);
-        PERSONAJE_1.dibujar(batch);
+        for (Personaje personaje : personajes) {
+            personaje.dibujar(batch);
+        }
         batch.end();
 
-        HUD.render(batch);
+        HUD.render(batch, personajes);
     }
 
     public boolean debeVolverAlMenu() { return volverAlMenu; }
@@ -225,8 +267,7 @@ public class PantallaJuego {
         mapa.dispose();
         HUD.dispose();
         batch.dispose();
-        PERSONAJE_1.dispose();
-        TEXTURA_ESPADA.dispose();
+        for(Personaje p : personajes) p.dispose();
         if (hiloTiempo != null) hiloTiempo.terminar();
         GestorSonidos.getInstancia().detenerMusica();
     }

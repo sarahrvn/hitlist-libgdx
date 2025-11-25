@@ -9,7 +9,6 @@ public class Estadistica {
 
     public Estadistica(String nombre, int valor) {
         this.nombre = nombre;
-        // Usamos el setter para asegurar que inicia dentro del rango
         setEstadistica(valor);
     }
 
