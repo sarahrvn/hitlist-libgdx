@@ -251,6 +251,7 @@ public class Personaje {
         this.velocidadX = empujeBaseX * factorVuelo * direccionEmpuje;
         this.velocidadY = empujeBaseY * factorVuelo; // Siempre un poco hacia arriba
 
+        GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.CAIDA, 1f);
         // Estado
         this.enElSuelo = false;
         this.intentandoMoverse = false; // "Mareo" momentáneo (se queda quieto un toque)
@@ -324,11 +325,12 @@ public class Personaje {
 
     // Resetear valores pj
     public void resetear() {
-        velocidadX = 0;
-        velocidadY = 0;
-        enElSuelo = false;
-        saltosDisponibles = MAX_SALTOS;
-        intentandoMoverse = false;
+        this.velocidadX = 0;
+        this.velocidadY = 0;
+        this.enElSuelo = false;
+        this.saltosDisponibles = MAX_SALTOS;
+        this.intentandoMoverse = false;
+        this.danioAcumulado = 0;
 
         // Le saca el arma
         this.armaEquipada = null;
@@ -350,9 +352,18 @@ public class Personaje {
     }
 
 
-    public Rectangle getHitbox() { return boundingBox; }
+
+    public boolean isAtacando() { return this.atacando;}
+
+    public Rectangle getHitbox() { return this.boundingBox; }
+    public Rectangle getHitboxAtaque() { return this.hitboxAtaque; }
 
     public int getVidas() { return this.vidas;}
+
+    public Estadistica getFuerza() { return this.fuerza; }
+    public float getDanioAcumulado() {
+        return danioAcumulado;
+    }
 
     public void setPosition(float x, float y) {
         boundingBox.setPosition(x - boundingBox.width / 2f, y - boundingBox.height / 2f);
