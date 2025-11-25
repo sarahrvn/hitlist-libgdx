@@ -3,7 +3,7 @@ package com.punchline.hitlist.elementosJuego;
 public enum SonidoDisponible {
     // Sonidos de personaje
     SALTO("sonidos/salto.wav"),
-    CAIDA("sonidos/caida.wav"),
+    CAIDA("sonidos/caida.ogg"),
     GOLPE("sonidos/golpe.wav"),
     ESPADA("sonidos/agarrar_espada.mp3"),
     MENU("sonidos/menu_mover.mp3"),
