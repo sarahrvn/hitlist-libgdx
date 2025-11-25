@@ -27,6 +27,9 @@ logos/Punchline_Logo.png
 logos/Titulo_Mas_Chico.png
 mapas/bloque.tsx
 mapas/bloque_madera.png
+mapas/c/mapa_cartel.png
+mapas/c/mapa_cartel.tmx
+mapas/c/mapa_cartel.tsx
 mapas/c/mapa_concierto.tmx
 mapas/escalera.tsx
 mapas/escalera_madera.png
