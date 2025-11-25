@@ -80,7 +80,7 @@ public class PantallaJuego {
 
     private void cargarSonidos() {
         GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.SALTO);
-        GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.CAIDA);
+        //GestorSonidos.getInstancia().cargarSonido(SonidoDisponible.CAIDA);
     }
 
     private void reproducirMusicaMapa() {
@@ -105,7 +105,6 @@ public class PantallaJuego {
         }
     }
 
-    // ✅ Spawn genérico: todas las espadas se ven iguales
     private void spawnearEspadaReal() {
         float w = mapa.getAncho();
         float[] posX = { w * 0.2f, w * 0.5f, w * 0.8f };
@@ -123,6 +122,7 @@ public class PantallaJuego {
         }
 
         Gdx.input.setInputProcessor(teclaListener);
+
         if (teclaListener.isEscapeJustPressed()) {
             enPausa = !enPausa;
             if(enPausa) GestorSonidos.getInstancia().pausarMusica();

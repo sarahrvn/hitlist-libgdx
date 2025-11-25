@@ -5,9 +5,11 @@ public enum SonidoDisponible {
     SALTO("sonidos/salto.wav"),
     CAIDA("sonidos/caida.wav"),
     GOLPE("sonidos/golpe.wav"),
+    ESPADA("sonidos/agarrar_espada.mp3"),
+    MENU("sonidos/menu_mover.mp3"),
 
     // Música de fondo
-    MUSICA_MENU("musica/menu.mp3"),
+    MUSICA_MENU("musica/menu_musica.mp3"),
     MUSICA_COMBATE("musica/combate.mp3");
 
     private final String RUTA_ARCHIVO;

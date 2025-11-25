@@ -49,6 +49,10 @@ mapas/piso.tsx
 mapas/piso_esquina.tsx
 mapas/piso_madera.png
 mapas/piso_madera_esquina.png
+musica/combate.mp3
+musica/menu_musica.mp3
+sonidos/agarrar_espada.mp3
+sonidos/menu_mover.mp3
 sonidos/salto.wav
 sprites/Billie preview.png
 sprites/Billie_Eilish.png
