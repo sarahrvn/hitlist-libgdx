@@ -16,6 +16,10 @@ fuentes/ari-w9500-condensed.ttf
 fuentes/ari-w9500-display.ttf
 fuentes/ari-w9500.ttf
 fuentes/ari_w9500.zip
+hud/Billie_Hud.png
+hud/Frida_Hud.png
+hud/Lebron_Hud.png
+hud/Michael_Hud.png
 hud/corazon_amarillo.png
 hud/corazon_amarilloo.png
 logos/Hitlist_Titulo.png
@@ -55,6 +59,7 @@ mapas/piso_madera_esquina.png
 musica/combate.mp3
 musica/menu_musica.mp3
 sonidos/agarrar_espada.mp3
+sonidos/caida.ogg
 sonidos/menu_mover.mp3
 sonidos/salto.wav
 sprites/Billie preview.png

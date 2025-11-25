@@ -16,7 +16,6 @@ import com.punchline.hitlist.interacciones.HiloTiempo;
 import com.punchline.hitlist.personajes.Personaje;
 import com.punchline.hitlist.personajes.TipoPersonaje;
 
-import java.util.Iterator;
 import java.util.Random;
 
 public class PantallaJuego {
@@ -119,6 +118,8 @@ public class PantallaJuego {
         float x = posX[random.nextInt(3)];
         float y = POSICION_SPAWN.y;
 
+        // Actualizado: Usamos el constructor de 3 argumentos de tu clase Espada.
+        // La clase Espada ahora maneja la textura internamente (static).
         Espada nueva = new Espada(x, y, null);
         espadasEnJuego.add(nueva);
     }
@@ -136,27 +137,28 @@ public class PantallaJuego {
         if (!enPausa) {
             manejarInput();
 
-            // Actualizar pjs
-            for (Personaje personaje : personajes) {
-                personaje.update(delta, mapa.getColisiones());
+            // Actualizar personajes (Bucle indexado)
+            for (int i = 0; i < personajes.size; i++) {
+                personajes.get(i).update(delta, mapa.getColisiones());
             }
+
             verificarColisionVacio();
             verificarCombate();
 
             // Espadas
-
             if (debeSpawnearEspada) {
                 spawnearEspadaReal();
                 debeSpawnearEspada = false;
             }
 
-            Iterator<Espada> iter = espadasEnJuego.iterator();
-            while(iter.hasNext()) {
-                Espada espada = iter.next();
+            // Actualizar espadas y eliminar inactivas (Bucle INVERSO para borrar seguro)
+            for (int i = espadasEnJuego.size - 1; i >= 0; i--) {
+                Espada espada = espadasEnJuego.get(i);
                 espada.update(delta, mapa.getColisiones());
+
                 if (!espada.isActiva()) {
                     espada.dispose();
-                    iter.remove();
+                    espadasEnJuego.removeIndex(i); // Borrado eficiente sin iterador
                 }
             }
         }
@@ -164,6 +166,7 @@ public class PantallaJuego {
     }
 
     private void manejarInput() {
+        // Obtenemos los personajes directamente por índice, es seguro pues siempre hay 2
         Personaje p1 = personajes.get(0);
         Personaje p2 = personajes.get(1);
 
@@ -171,7 +174,6 @@ public class PantallaJuego {
         if (teclaListener.isP1ArribaJustPressed()) { p1.saltar(); }
         if (teclaListener.isP1Izquierda()) { p1.caminarIzquierda(); }
         if (teclaListener.isP1Derecha()) { p1.caminarDerecha(); }
-        if (teclaListener.isP1ArribaJustPressed()) { p1.saltar(); }
         if (teclaListener.isP1AgarrarJustPressed()) { verificarAgarre(p1); }
         if (teclaListener.isP1AtacarJustPressed()) { p1.atacar(); }
 
@@ -179,7 +181,6 @@ public class PantallaJuego {
         if (teclaListener.isP2ArribaJustPressed()) { p2.saltar(); }
         if (teclaListener.isP2Izquierda()) { p2.caminarIzquierda(); }
         if (teclaListener.isP2Derecha()) { p2.caminarDerecha(); }
-        if (teclaListener.isP2ArribaJustPressed()) { p2.saltar(); }
         if (teclaListener.isP2AgarrarJustPressed()) { verificarAgarre(p2); }
         if (teclaListener.isP2AtacarJustPressed()) { p2.atacar(); }
     }
@@ -187,9 +188,11 @@ public class PantallaJuego {
     private void verificarAgarre(Personaje personaje) {
         Rectangle hitboxPJ = personaje.getHitbox();
 
-        for(Espada espada : espadasEnJuego) {
-            if(hitboxPJ.overlaps(espada.getArea()) && !personaje.isArmaEquipada()) {
+        // Bucle indexado normal
+        for (int i = 0; i < espadasEnJuego.size; i++) {
+            Espada espada = espadasEnJuego.get(i);
 
+            if(hitboxPJ.overlaps(espada.getArea()) && !personaje.isArmaEquipada()) {
                 personaje.equiparArma();
                 espada.destruir();
             }
@@ -197,20 +200,18 @@ public class PantallaJuego {
     }
 
     private void verificarCombate() {
-        for (Personaje atacante : personajes) {
-            if (atacante.isAtacando()) { // Asumiendo que agregaste el getter isAtacando() en Personaje
+        // Doble bucle indexado, evita cualquier problema de anidamiento
+        for (int i = 0; i < personajes.size; i++) {
+            Personaje atacante = personajes.get(i);
 
-                for (Personaje victima : personajes) {
-                    if (atacante == victima) continue; // No pegarse a sí mismo
+            if (atacante.isAtacando()) {
+                for (int j = 0; j < personajes.size; j++) {
+                    Personaje victima = personajes.get(j);
 
-                    // Usamos hitboxAtaque del atacante vs hitbox cuerpo victima
-                    // NOTA: Necesitas agregar el getter getHitboxAtaque() en Personaje si no es público
+                    if (atacante == victima) continue;
+
                     if (atacante.getHitboxAtaque().overlaps(victima.getHitbox())) {
-
-                        // Calcular dirección: 1 (derecha) o -1 (izquierda)
                         int direccion = (atacante.getHitbox().x < victima.getHitbox().x) ? 1 : -1;
-
-                        // El personaje maneja la física
                         victima.recibirGolpe(atacante.getFuerza().getValor(), direccion);
                     }
                 }
@@ -219,10 +220,18 @@ public class PantallaJuego {
     }
 
     private void verificarColisionVacio() {
-        for (Personaje personaje : personajes) {
+        for (int i = 0; i < personajes.size; i++) {
+            Personaje personaje = personajes.get(i);
+
+            // mapa.getColisionesVacio() probablemente sea un Array o List, si es Array usa size, si es List usa size()
+            // Asumiremos que es Iterable o Array. Si mapa devuelve un Array de LibGDX, mejor usar bucle for i.
+            // Si es un ArrayList de Java, el foreach está bien porque no estamos dentro de otro foreach de la MISMA lista.
+            // Pero para consistencia, si puedes, usa for i. Como no tengo el código de Mapa, dejo el foreach simple
+            // ya que NO anida iteradores de la misma lista 'personajes'.
             for (Rectangle vacio : mapa.getColisionesVacio()) {
                 if (personaje.getHitbox().overlaps(vacio)) {
                     personaje.sacarVida();
+                    GestorSonidos.getInstancia().reproducirSonido(SonidoDisponible.CAIDA);
                     if (personaje.estaMuerto()) {
                         terminarPartida(personaje);
                     } else {
@@ -242,18 +251,18 @@ public class PantallaJuego {
         personaje.resetear();
     }
 
-    private void terminarPartida(Personaje personaje) {
+    private void terminarPartida(Personaje personajePerdedor) {
         if (hiloTiempo != null) { hiloTiempo.terminar(); }
-        if (personaje == this.personajes.get(0)) {
+
+        if (personajePerdedor == this.personajes.get(0)) {
             indiceGanador = 1;
-        } else if (personaje == this.personajes.get(1)) {
+        } else if (personajePerdedor == this.personajes.get(1)) {
             indiceGanador = 0;
         }
         volverAlMenu = true;
     }
 
-    public int getIndiceGanador() { return this.indiceGanador;
-    }
+    public int getIndiceGanador() { return this.indiceGanador; }
 
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -270,10 +279,17 @@ public class PantallaJuego {
 
         batch.setProjectionMatrix(camaraJuego.combined);
         batch.begin();
-        for(Espada e : espadasEnJuego) e.render(batch);
-        for (Personaje personaje : personajes) {
-            personaje.dibujar(batch);
+
+        // Bucle indexado para renderizar espadas
+        for (int i = 0; i < espadasEnJuego.size; i++) {
+            espadasEnJuego.get(i).render(batch);
         }
+
+        // Bucle indexado para renderizar personajes
+        for (int i = 0; i < personajes.size; i++) {
+            personajes.get(i).dibujar(batch);
+        }
+
         batch.end();
 
         HUD.render(batch, personajes);
@@ -291,7 +307,10 @@ public class PantallaJuego {
         mapa.dispose();
         HUD.dispose();
         batch.dispose();
-        for(Personaje p : personajes) p.dispose();
+        // Bucle indexado para dispose
+        for (int i = 0; i < personajes.size; i++) {
+            personajes.get(i).dispose();
+        }
         if (hiloTiempo != null) hiloTiempo.terminar();
         GestorSonidos.getInstancia().detenerMusica();
     }
