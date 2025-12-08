@@ -162,7 +162,9 @@ public class PantallaSeleccionPersonaje {
 
         fontStats.draw(batch, "FUE: " + tipo.getFuerza(), statsX, statsY);
         fontStats.draw(batch, "VEL: " + tipo.getVelocidad(), statsX, statsY - 22);
-        // ... otros stats
+        fontStats.draw(batch, "DEF:" + tipo.getDefensa(), statsX, statsY - 44 );
+        fontStats.draw(batch, "DES:" + tipo.getDestreza(), statsX, statsY - 66);
+
     }
 
     private void manejarInput() {

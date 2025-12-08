@@ -63,11 +63,6 @@ public class Hud {
         // Dibujar tiempo
         font.draw(batch, "Tiempo: " + (int) tiempoRestante, anchoPantalla - 130, altoPantalla - 20);
 
-        // Mostrar pausa
-        if (pausado) {
-            font.draw(batch, "PAUSADO", anchoPantalla / 2 - 40, altoPantalla / 2);
-        }
-
         batch.end();
     }
 
